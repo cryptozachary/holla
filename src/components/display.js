@@ -14,7 +14,7 @@ export default function Display() {
         setMicState(!micState)
         console.log(micState)
         if (micState) {
-            micImg.setAttribute("style", "background-color:gray")
+            micImg.setAttribute("style", "background-color:red")
             recordNow()
         } else {
             micImg.setAttribute("style", "background-color:intial")
@@ -41,8 +41,8 @@ export default function Display() {
         return sampleElements
     }
 
-    let samples = buttonState.map(item => {
-        return <Buttons padName={item.name}></Buttons>
+    let samples = buttonState.map((item, index) => {
+        return <Buttons key={index} padName={item.name}></Buttons>
     })
 
 
