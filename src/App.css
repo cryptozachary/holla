@@ -1,38 +1,105 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Calligraffitti&display=swap');
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  /* font-family: 'Calligraffitti', cursive; */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.header-container {
+  display: flex;
+  justify-content: center;
+  height: 75px;
+  background-image: linear-gradient(to right, grey, white, red);
+  border-bottom: 2px solid black;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.header-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  cursor: default
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.navigation-container {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+  background-color: grey;
+  padding: 10px;
+  border-bottom: 1px solid black;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.pac-logo {
+  width: 30px;
+  height: 30px;
+}
+
+
+.app {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.transport {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: auto auto auto;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-content: flex-end;
+  gap: 26px;
+
 }
 
-.App-link {
-  color: #61dafb;
+.button {
+  border-radius: 5px;
+  padding: 5px;
+  width: 60px;
+  height: 60px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ui-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 25px;
+  width: 278px;
+  height: 650px;
+  border: 4px solid black;
+}
+
+a:link {
+  color: black;
+}
+
+a:visited {
+  color: black;
+}
+
+a:hover {
+  transform: scaleY(1.2);
+}
+
+.my-devices {
+  width: 110px;
+  border: 1px solid black;
+  word-wrap: break-word;
+}
+
+.wave-display {
+  border: 1px solid grey;
+  width: 254px;
+  height: 147px;
+}
+
+.mic-logo {
+  width: 30px;
+  height: 60px;
 }
