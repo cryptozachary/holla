@@ -1,7 +1,7 @@
 export default function Buttons(props) {
 
     return (
-        <button onClick={props.handleClick} type="button" className="button" > {props.padName}</button >
+        <button type="button" onClick={props.handleClick} className="button" > {props.padName}</button >
 
     )
 }

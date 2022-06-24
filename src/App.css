@@ -6,6 +6,10 @@
   /* font-family: 'Calligraffitti', cursive; */
 }
 
+body {
+  background-color: whitesmoke;
+}
+
 .header-container {
   display: flex;
   justify-content: center;
@@ -110,6 +114,24 @@ a:hover {
 
 .mic-logo {
   width: 30px;
-  height: 60px;
+  height: 40px;
   border-radius: 5px;
+}
+
+.octave-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+}
+
+.octave-label {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.left-arrow,
+.right-arrow {
+  width: 35px;
+  height: 35px;
 }
