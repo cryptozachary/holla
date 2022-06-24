@@ -118,6 +118,12 @@ a:hover {
   border-radius: 5px;
 }
 
+.stop-logo {
+  width: 30px;
+  height: 40px;
+  border-radius: 5px;
+}
+
 .octave-container {
   display: flex;
   flex-direction: row;

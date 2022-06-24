@@ -1,6 +1,7 @@
 import React from 'react'
 import Buttons from "./buttons"
 import MicLogo from "../images/mic.svg"
+import StopLogo from "../images/stop.png"
 import WaveSurfer from "wavesurfer.js"
 import * as Tone from "tone"
 import Kick from "../audio/808.wav"
@@ -9,10 +10,14 @@ import Left from "../images/left.svg"
 import Right from "../images/right.svg"
 
 
+
 export default function Display() {
 
     let micImg = document.querySelector(".mic-logo")
     let waver = document.querySelector(".wave-display")
+    const deviceLabel = document.querySelector(".download")
+    let constraintObj = { audio: true }
+    let audio;
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -94,11 +99,10 @@ export default function Display() {
 
     function toggleRecording() {
         if (micState) {
-            micImg.setAttribute("style", "background-color:red")
+            // micImg.setAttribute("style", "background-color:red")
             recordNow()
         } else {
-            micImg.setAttribute("style", "background-color:initial")
-            stopNow()
+            // micImg.setAttribute("style", "background-color:initial")
         }
     }
 
@@ -160,11 +164,57 @@ export default function Display() {
 
     function recordNow() {
 
+        navigator.mediaDevices.getUserMedia(constraintObj)
+            .then(stream => {
+                const mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                console.log("recording")
+                let audioChunks = [];
+                mediaRecorder.addEventListener("dataavailable", event => {
+                    audioChunks.push(event.data);
+                });
+
+                function stopNow() {
+                    switch (micState) {
+                        case true: if (mediaRecorder.state === "recording") {
+                            mediaRecorder.stop()
+                            console.log("recording stopped")
+                        } else {
+                            console.log("not recording!")
+                        }
+                    }
+                }
+
+                //when media stops recording create audio file for download
+                mediaRecorder.addEventListener("stop", () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = []
+                    const audioUrl = URL.createObjectURL(audioBlob);
+
+                    //prepare audio for download by passing into html 5 audio and appending to div 
+                    audio = new Audio(audioUrl);
+                    const li = document.createElement('li');
+                    const audioElement = document.createElement('audio');
+                    const anchor = document.createElement('a');
+                    anchor.setAttribute('href', audioUrl);
+                    const now = new Date();
+                    anchor.setAttribute(
+                        'download',
+                        `recording-${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}--${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}-${now.getSeconds().toString().padStart(2, '0')}.webm`
+                    );
+                    anchor.innerText = 'Download';
+                    audio.setAttribute('src', audioUrl);
+                    audio.setAttribute('controls', 'controls');
+                    li.appendChild(audioElement);
+                    li.appendChild(anchor);
+                    deviceLabel.appendChild(li)
+
+                });
+            });
+
     }
 
-    function stopNow() {
 
-    }
 
     function getButtons() {
 
@@ -186,11 +236,12 @@ export default function Display() {
         <div className="ui-container">
             {/* <input type="file" accept="audio/mp3"></input> */}
             <div id="waveform" className="wave-display">Wave Viewer</div>
-            <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img>
+            {!micState ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleMic} src={StopLogo} alt="stop"></img>}
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
             <div className="transport">
                 {samples}
             </div>
+            <div className="download"></div>
         </div>
     )
 }
