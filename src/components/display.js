@@ -5,9 +5,11 @@ import StopLogo from "../images/stop.png"
 import WaveSurfer from "wavesurfer.js"
 import * as Tone from "tone"
 import Kick from "../audio/808.wav"
+import Song from "../audio/song.wav"
 import Octaves from "./octaves"
 import Left from "../images/left.svg"
 import Right from "../images/right.svg"
+import RegionsPlugin from 'wavesurfer.js/src/plugin/regions'
 
 
 
@@ -16,8 +18,12 @@ export default function Display() {
     let micImg = document.querySelector(".mic-logo")
     let waver = document.querySelector(".wave-display")
     const deviceLabel = document.querySelector(".download")
+    let soundFile = document.querySelector(".sound-file")
     let constraintObj = { audio: true }
     let audio;
+    let sound;
+    let sampler;
+    let wavesurfer;
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -25,49 +31,84 @@ export default function Display() {
 
     const [octave, setOctave] = React.useState(4)
 
-    const waveform = React.useRef(null);
 
-    const sampler = new Tone.Sampler({
-        urls: {
-            "C4": Kick,
-        },
-        release: 1,
 
-    }).toDestination();
+    React.useEffect(() => {
 
-    // React.useEffect(() => {
-    //     // Check if wavesurfer object is already created.
-    //     if (!waveform.current) {
-    //         // Create a wavesurfer object
-    //         // More info about options here https://wavesurfer-js.org/docs/options.html
-    //         waveform.current = WaveSurfer.create({
-    //             container: "#waveform",
-    //             waveColor: "#567FFF",
-    //             barGap: 2,
-    //             barWidth: 3,
-    //             barRadius: 3,
-    //             cursorWidth: 3,
-    //             cursorColor: "#567FFF",
-    //         });
-    //         // Load audio from a remote url.
-    //         waveform.current.load("../audio/cursed.mp3");
-    //         /* To load a local audio file
-    //               1. Read the audio file as a array buffer.
-    //               2. Create a blob from the array buffer
-    //               3. Load the audio using wavesurfer's loadBlob API
-    //        */
-    //     }
-    // }, []);
+        // Create a wavesurfer object
+        // More info about options here https://wavesurfer-js.org/docs/options.html
+        wavesurfer = WaveSurfer.create({
+            container: "#waveform",
+            waveColor: "#567FFF",
+            height: 146,
+            barGap: 1,
+            barWidth: 1,
+            barRadius: 1,
+            cursorWidth: 3,
+            cursorColor: "#56w7FFF",
+            plugins: [
+                RegionsPlugin.create({})]
+        });
+        wavesurfer.load(Kick)
 
-    // const playAudio = () => {
-    //     // Check if the audio is already playing
-    //     if (waveform.current.isPlaying()) {
-    //         waveform.current.pause();
-    //     } else {
-    //         waveform.current.play();
-    //     }
-    // };
+        return function () {
+            wavesurfer.destroy()
+        }
 
+    }, []);
+
+    React.useEffect(() => {
+
+        sampler = new Tone.Sampler({
+            urls: {
+                "C4": sound ?? Kick
+            },
+            release: 1,
+
+        }).toDestination();
+
+        console.log("running")
+
+        return function () {
+            sampler.dispose()
+        }
+
+
+    }, [padClick])
+
+
+    function loadSound(e) {
+
+        const file = e.target.files[0];
+        const fileList = e.target.files
+        console.log(file, fileList);
+
+        if (file) {
+            let reader = new FileReader();
+
+            reader.onload = function (evt) {
+                // Create a Blob providing as first argument a typed array with the file buffer
+                let blob = new Blob([new Uint8Array(evt.target.result)]);
+
+                // Load the blob into Wavesurfer
+                wavesurfer.loadBlob(blob);
+
+
+
+            };
+
+            reader.onerror = function (evt) {
+                console.error("An error ocurred reading the file: ", evt);
+            };
+
+            // Read File as an ArrayBuffer
+            reader.readAsArrayBuffer(file);
+
+
+
+        }
+
+    }
 
     function toggleLeft() {
         setOctave(prev => {
@@ -91,17 +132,26 @@ export default function Display() {
         })
     }
 
-    function toggleMic() {
-        setMicState(!micState)
-        console.log(micState)
+    React.useEffect(() => {
         toggleRecording()
+
+    }, [micState])
+
+    function toggleMic() {
+        setMicState(prev => {
+            return !prev
+        })
     }
 
+    console.log(micState)
+
     function toggleRecording() {
-        if (micState) {
+        if (micState === true) {
             // micImg.setAttribute("style", "background-color:red")
             recordNow()
+
         } else {
+            // recordNow.stopNow()
             // micImg.setAttribute("style", "background-color:initial")
         }
     }
@@ -209,10 +259,18 @@ export default function Display() {
                     li.appendChild(anchor);
                     deviceLabel.appendChild(li)
 
+
+
                 });
+
+                recordNow.stopNow = stopNow
             });
 
+
+
     }
+
+
 
 
 
@@ -234,9 +292,9 @@ export default function Display() {
 
     return (
         <div className="ui-container">
-            {/* <input type="file" accept="audio/mp3"></input> */}
-            <div id="waveform" className="wave-display">Wave Viewer</div>
-            {!micState ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleMic} src={StopLogo} alt="stop"></img>}
+            <input type="file" className="sound-file" accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
+            <div id="waveform" className="wave-display"></div>
+            {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleMic} src={StopLogo} alt="stop"></img>}
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
             <div className="transport">
                 {samples}
@@ -245,3 +303,4 @@ export default function Display() {
         </div>
     )
 }
+
