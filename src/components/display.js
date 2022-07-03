@@ -24,6 +24,10 @@ export default function Display() {
     let sound;
     let sampler;
     let wavesurfer;
+    let stopIt = false;
+    let blob;
+    let blob2;
+
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -31,10 +35,11 @@ export default function Display() {
 
     const [octave, setOctave] = React.useState(4)
 
+    const [defaultSound, setDefaultSound] = React.useState(Kick)
+
 
 
     React.useEffect(() => {
-
         // Create a wavesurfer object
         // More info about options here https://wavesurfer-js.org/docs/options.html
         wavesurfer = WaveSurfer.create({
@@ -49,7 +54,7 @@ export default function Display() {
             plugins: [
                 RegionsPlugin.create({})]
         });
-        wavesurfer.load(Kick)
+        //wavesurfer.load(Kick)
 
         return function () {
             wavesurfer.destroy()
@@ -61,20 +66,21 @@ export default function Display() {
 
         sampler = new Tone.Sampler({
             urls: {
-                "C4": sound ?? Kick
+                "C4": defaultSound
             },
             release: 1,
 
         }).toDestination();
 
-        console.log("running")
+        console.log("running tone sample useffect")
 
         return function () {
             sampler.dispose()
         }
 
+    }, [octave, defaultSound])
 
-    }, [padClick])
+
 
 
     function loadSound(e) {
@@ -84,16 +90,19 @@ export default function Display() {
         console.log(file, fileList);
 
         if (file) {
+
             let reader = new FileReader();
 
+            // Read File as an ArrayBuffer
+            reader.readAsArrayBuffer(file);
             reader.onload = function (evt) {
                 // Create a Blob providing as first argument a typed array with the file buffer
-                let blob = new Blob([new Uint8Array(evt.target.result)]);
-
+                const result = evt.target.result
+                console.log(result)
+                blob = new Blob([new Uint8Array(evt.target.result)]);
+                console.log(blob)
                 // Load the blob into Wavesurfer
                 wavesurfer.loadBlob(blob);
-
-
 
             };
 
@@ -101,14 +110,41 @@ export default function Display() {
                 console.error("An error ocurred reading the file: ", evt);
             };
 
-            // Read File as an ArrayBuffer
-            reader.readAsArrayBuffer(file);
 
+        }
+
+        if (file) {
+
+            let reader2 = new FileReader();
+
+            // Read File as an ArrayBuffer
+            reader2.readAsDataURL(file);
+            reader2.onload = function (evt) {
+                // Create a Blob providing as first argument a typed array with the file buffer
+                const result = evt.target.result
+                console.log(result)
+                blob2 = new Blob([new Uint8Array(evt.target.result)]);
+                console.log(result)
+
+                setDefaultSound(prev => {
+                    let newDef = result
+                    console.log(newDef)
+                    return newDef
+                })
+
+
+            };
+
+            reader2.onerror = function (evt) {
+                console.error("An error ocurred reading the file: ", evt);
+            };
 
 
         }
 
+
     }
+
 
     function toggleLeft() {
         setOctave(prev => {
@@ -138,12 +174,20 @@ export default function Display() {
     }, [micState])
 
     function toggleMic() {
+        console.log("toggle mic")
         setMicState(prev => {
             return !prev
         })
     }
 
-    console.log(micState)
+    function toggleStop() {
+        setMicState(prev => {
+            return !prev
+        })
+
+
+    }
+    console.log(`Mic is ${micState}`)
 
     function toggleRecording() {
         if (micState === true) {
@@ -224,15 +268,9 @@ export default function Display() {
                     audioChunks.push(event.data);
                 });
 
-                function stopNow() {
-                    switch (micState) {
-                        case true: if (mediaRecorder.state === "recording") {
-                            mediaRecorder.stop()
-                            console.log("recording stopped")
-                        } else {
-                            console.log("not recording!")
-                        }
-                    }
+                if (stopIt === true) {
+                    stopNow()
+                    console.log("stopped")
                 }
 
                 //when media stops recording create audio file for download
@@ -258,21 +296,25 @@ export default function Display() {
                     li.appendChild(audioElement);
                     li.appendChild(anchor);
                     deviceLabel.appendChild(li)
-
-
-
                 });
 
-                recordNow.stopNow = stopNow
+
+                function stopNow() {
+                    switch (micState) {
+                        case true: if (mediaRecorder.state === "recording") {
+                            mediaRecorder.stop()
+                            console.log("recording stopped")
+                        } else {
+                            console.log("not recording!")
+                        }
+                    }
+                }
+
             });
 
 
 
     }
-
-
-
-
 
     function getButtons() {
 
@@ -294,7 +336,7 @@ export default function Display() {
         <div className="ui-container">
             <input type="file" className="sound-file" accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
             <div id="waveform" className="wave-display"></div>
-            {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleMic} src={StopLogo} alt="stop"></img>}
+            {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleStop} src={StopLogo} alt="stop"></img>}
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
             <div className="transport">
                 {samples}
