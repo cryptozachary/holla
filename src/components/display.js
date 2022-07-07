@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Buttons from "./buttons"
 import MicLogo from "../images/mic.svg"
 import StopLogo from "../images/stop.png"
@@ -15,6 +15,8 @@ import RegionsPlugin from 'wavesurfer.js/src/plugin/regions'
 
 export default function Display() {
 
+    console.log("app render")
+
     let micImg = document.querySelector(".mic-logo")
     let waver = document.querySelector(".wave-display")
     const deviceLabel = document.querySelector(".download")
@@ -24,9 +26,7 @@ export default function Display() {
     let sound;
     let sampler;
     let wavesurfer;
-    let stopIt = false;
-    let blob;
-    let blob2;
+
 
 
     const [buttonState, setButtonState] = React.useState(getButtons())
@@ -36,6 +36,10 @@ export default function Display() {
     const [octave, setOctave] = React.useState(4)
 
     const [defaultSound, setDefaultSound] = React.useState(Kick)
+
+    const [stopIt, setStopIt] = React.useState(null)
+
+    const firstRender = useRef(true)
 
 
 
@@ -54,13 +58,15 @@ export default function Display() {
             plugins: [
                 RegionsPlugin.create({})]
         });
-        //wavesurfer.load(Kick)
+        wavesurfer.load(defaultSound)
+
+        console.log("running wave useffect")
 
         return function () {
             wavesurfer.destroy()
         }
 
-    }, []);
+    }, [defaultSound]);
 
     React.useEffect(() => {
 
@@ -80,9 +86,6 @@ export default function Display() {
 
     }, [octave, defaultSound])
 
-
-
-
     function loadSound(e) {
 
         const file = e.target.files[0];
@@ -99,7 +102,7 @@ export default function Display() {
                 // Create a Blob providing as first argument a typed array with the file buffer
                 const result = evt.target.result
                 console.log(result)
-                blob = new Blob([new Uint8Array(evt.target.result)]);
+                let blob = new Blob([new Uint8Array(evt.target.result)]);
                 console.log(blob)
                 // Load the blob into Wavesurfer
                 wavesurfer.loadBlob(blob);
@@ -123,7 +126,7 @@ export default function Display() {
                 // Create a Blob providing as first argument a typed array with the file buffer
                 const result = evt.target.result
                 console.log(result)
-                blob2 = new Blob([new Uint8Array(evt.target.result)]);
+                let blob2 = new Blob([new Uint8Array(evt.target.result)]);
                 console.log(result)
 
                 setDefaultSound(prev => {
@@ -174,25 +177,26 @@ export default function Display() {
     }, [micState])
 
     function toggleMic() {
-        console.log("toggle mic")
         setMicState(prev => {
             return !prev
         })
     }
+
 
     function toggleStop() {
+        setStopIt(!stopIt)
         setMicState(prev => {
             return !prev
         })
-
-
     }
-    console.log(`Mic is ${micState}`)
+
+    console.log(` Stop it = ${stopIt}`)
+    console.log(`mic state is ${micState}`)
 
     function toggleRecording() {
         if (micState === true) {
             // micImg.setAttribute("style", "background-color:red")
-            recordNow()
+            //recordNow()
 
         } else {
             // recordNow.stopNow()
@@ -256,65 +260,87 @@ export default function Display() {
         }
     }
 
-    function recordNow() {
+    React.useEffect(() => {
 
-        navigator.mediaDevices.getUserMedia(constraintObj)
-            .then(stream => {
-                const mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                console.log("recording")
-                let audioChunks = [];
-                mediaRecorder.addEventListener("dataavailable", event => {
-                    audioChunks.push(event.data);
-                });
+        let audioChunks
+        let mediaRecorder;
 
-                if (stopIt === true) {
-                    stopNow()
-                    console.log("stopped")
-                }
+        if (firstRender.current) {
 
-                //when media stops recording create audio file for download
-                mediaRecorder.addEventListener("stop", () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    audioChunks = []
-                    const audioUrl = URL.createObjectURL(audioBlob);
+            firstRender.current = false
+        } else {
 
-                    //prepare audio for download by passing into html 5 audio and appending to div 
-                    audio = new Audio(audioUrl);
-                    const li = document.createElement('li');
-                    const audioElement = document.createElement('audio');
-                    const anchor = document.createElement('a');
-                    anchor.setAttribute('href', audioUrl);
-                    const now = new Date();
-                    anchor.setAttribute(
-                        'download',
-                        `recording-${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}--${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}-${now.getSeconds().toString().padStart(2, '0')}.webm`
-                    );
-                    anchor.innerText = 'Download';
-                    audio.setAttribute('src', audioUrl);
-                    audio.setAttribute('controls', 'controls');
-                    li.appendChild(audioElement);
-                    li.appendChild(anchor);
-                    deviceLabel.appendChild(li)
-                });
+            navigator.mediaDevices.getUserMedia(constraintObj)
+                .then(stream => {
 
 
-                function stopNow() {
-                    switch (micState) {
-                        case true: if (mediaRecorder.state === "recording") {
-                            mediaRecorder.stop()
-                            console.log("recording stopped")
-                        } else {
-                            console.log("not recording!")
+
+                    mediaRecorder = new MediaRecorder(stream);
+
+
+                    if (stopIt === true) {
+                        mediaRecorder.stop()
+                        setStopIt(!stopIt)
+                    }
+                    if (micState === true) {
+                        mediaRecorder.start();
+                        console.log("recording")
+                        audioChunks = [];
+                        mediaRecorder.addEventListener("dataavailable", event => {
+                            audioChunks.push(event.data);
+                        });
+                    }
+
+
+
+
+
+
+                    //when media stops recording create audio file for download
+                    mediaRecorder.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        audioChunks = []
+                        const audioUrl = URL.createObjectURL(audioBlob);
+
+                        //prepare audio for download by passing into html 5 audio and appending to div 
+                        audio = new Audio(audioUrl);
+                        const li = document.createElement('li');
+                        const audioElement = document.createElement('audio');
+                        const anchor = document.createElement('a');
+                        anchor.setAttribute('href', audioUrl);
+                        const now = new Date();
+                        anchor.setAttribute(
+                            'download',
+                            `recording-${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}--${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}-${now.getSeconds().toString().padStart(2, '0')}.webm`
+                        );
+                        anchor.innerText = 'Download';
+                        audio.setAttribute('src', audioUrl);
+                        audio.setAttribute('controls', 'controls');
+                        li.appendChild(audioElement);
+                        li.appendChild(anchor);
+                        deviceLabel.appendChild(li)
+                    });
+
+
+
+                    function stopNow() {
+                        switch (micState) {
+                            case false: if (mediaRecorder.state === "recording") {
+                                mediaRecorder.stop()
+                                console.log("recording stopped")
+                            } else {
+                                console.log("not recording!")
+                            }
                         }
                     }
-                }
 
-            });
+                });
+        }
 
 
 
-    }
+    }, [toggleMic, toggleStop])
+
 
     function getButtons() {
 
