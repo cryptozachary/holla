@@ -7,9 +7,9 @@ import * as Tone from "tone"
 import Kick from "../audio/808.wav"
 import Song from "../audio/song.wav"
 import Octaves from "./octaves"
-import Left from "../images/left.svg"
-import Right from "../images/right.svg"
 import RegionsPlugin from 'wavesurfer.js/src/plugin/regions'
+import { useReactMediaRecorder } from "react-media-recorder";
+
 
 
 
@@ -21,13 +21,9 @@ export default function Display() {
     let waver = document.querySelector(".wave-display")
     const deviceLabel = document.querySelector(".download")
     let soundFile = document.querySelector(".sound-file")
-    let constraintObj = { audio: true }
-    let audio;
     let sound;
     let sampler;
     let wavesurfer;
-
-
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -41,7 +37,23 @@ export default function Display() {
 
     const firstRender = useRef(true)
 
+    const { status,
+        startRecording,
+        stopRecording,
+        mediaBlobUrl } =
+        useReactMediaRecorder({ audio: true });
 
+
+    React.useEffect(() => {
+
+        if (mediaBlobUrl) {
+            setDefaultSound(prev => {
+                let newDef = mediaBlobUrl
+                return mediaBlobUrl
+            })
+        }
+
+    }, [mediaBlobUrl])
 
     React.useEffect(() => {
         // Create a wavesurfer object
@@ -184,22 +196,20 @@ export default function Display() {
 
 
     function toggleStop() {
-        setStopIt(!stopIt)
         setMicState(prev => {
             return !prev
         })
     }
 
-    console.log(` Stop it = ${stopIt}`)
     console.log(`mic state is ${micState}`)
 
     function toggleRecording() {
         if (micState === true) {
             // micImg.setAttribute("style", "background-color:red")
-            //recordNow()
+            startRecording()
 
         } else {
-            // recordNow.stopNow()
+            stopRecording()
             // micImg.setAttribute("style", "background-color:initial")
         }
     }
@@ -260,86 +270,11 @@ export default function Display() {
         }
     }
 
-    React.useEffect(() => {
-
-        let audioChunks
-        let mediaRecorder;
-
-        if (firstRender.current) {
-
-            firstRender.current = false
-        } else {
-
-            navigator.mediaDevices.getUserMedia(constraintObj)
-                .then(stream => {
-
-
-
-                    mediaRecorder = new MediaRecorder(stream);
-
-
-                    if (stopIt === true) {
-                        mediaRecorder.stop()
-                        setStopIt(!stopIt)
-                    }
-                    if (micState === true) {
-                        mediaRecorder.start();
-                        console.log("recording")
-                        audioChunks = [];
-                        mediaRecorder.addEventListener("dataavailable", event => {
-                            audioChunks.push(event.data);
-                        });
-                    }
 
 
 
 
 
-
-                    //when media stops recording create audio file for download
-                    mediaRecorder.addEventListener("stop", () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        audioChunks = []
-                        const audioUrl = URL.createObjectURL(audioBlob);
-
-                        //prepare audio for download by passing into html 5 audio and appending to div 
-                        audio = new Audio(audioUrl);
-                        const li = document.createElement('li');
-                        const audioElement = document.createElement('audio');
-                        const anchor = document.createElement('a');
-                        anchor.setAttribute('href', audioUrl);
-                        const now = new Date();
-                        anchor.setAttribute(
-                            'download',
-                            `recording-${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}--${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}-${now.getSeconds().toString().padStart(2, '0')}.webm`
-                        );
-                        anchor.innerText = 'Download';
-                        audio.setAttribute('src', audioUrl);
-                        audio.setAttribute('controls', 'controls');
-                        li.appendChild(audioElement);
-                        li.appendChild(anchor);
-                        deviceLabel.appendChild(li)
-                    });
-
-
-
-                    function stopNow() {
-                        switch (micState) {
-                            case false: if (mediaRecorder.state === "recording") {
-                                mediaRecorder.stop()
-                                console.log("recording stopped")
-                            } else {
-                                console.log("not recording!")
-                            }
-                        }
-                    }
-
-                });
-        }
-
-
-
-    }, [toggleMic, toggleStop])
 
 
     function getButtons() {
