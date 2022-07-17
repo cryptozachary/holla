@@ -1,4 +1,5 @@
 import PacLogo from "../images/pac.png"
+import FileMenu from "./filemenu"
 
 export default function Header() {
     return (
@@ -8,10 +9,11 @@ export default function Header() {
             </div>
             <nav className="navigation-container">
                 <img className="pac-logo" src={PacLogo} alt="pac"></img>
-                <a className="home-nav" href="#">Home</a>
+                <a className="home-nav" href="#"><FileMenu>Home</FileMenu>
+                </a>
                 <a href="#" className="about">About</a>
-                <a href="#" className="feature-request">Feature-Request</a>
-                <a href="#" className="share">Share</a>
+                {/* <a href="#" className="feature-request">Feature-Request</a>
+                <a href="#" className="share">Share</a> */}
             </nav>
         </div>
     )

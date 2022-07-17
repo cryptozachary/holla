@@ -2,13 +2,19 @@ import React, { useRef } from 'react'
 import Buttons from "./buttons"
 import MicLogo from "../images/mic.svg"
 import StopLogo from "../images/stop.png"
+import OpenLogo from "../images/opensound2.svg"
 import WaveSurfer from "wavesurfer.js"
 import * as Tone from "tone"
 import Kick from "../audio/808.wav"
 import Song from "../audio/song.wav"
 import Octaves from "./octaves"
-import RegionsPlugin from 'wavesurfer.js/src/plugin/regions'
-import { useReactMediaRecorder } from "react-media-recorder";
+import RegionsPlugin from 'wavesurfer.js/src/plugin/regions/index.js'
+import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
+import { useReactMediaRecorder } from "react-media-recorder"
+import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
+import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
+
+
 
 
 
@@ -49,9 +55,11 @@ export default function Display() {
         if (mediaBlobUrl) {
             setDefaultSound(prev => {
                 let newDef = mediaBlobUrl
-                return mediaBlobUrl
+                return newDef
             })
         }
+
+        console.log("running mediablob useffect")
 
     }, [mediaBlobUrl])
 
@@ -60,25 +68,54 @@ export default function Display() {
         // More info about options here https://wavesurfer-js.org/docs/options.html
         wavesurfer = WaveSurfer.create({
             container: "#waveform",
-            waveColor: "#567FFF",
-            height: 146,
-            barGap: 1,
+            waveColor: "red",
+            height: 140,
+            barGap: 0.3,
             barWidth: 1,
-            barRadius: 1,
+            barRadius: 3,
             cursorWidth: 3,
             cursorColor: "#56w7FFF",
             plugins: [
-                RegionsPlugin.create({})]
+
+                MicrophonePlugin.create()
+                // RegionsPlugin.create({
+                //     regionsMinLength: 1,
+                //     maxRegions: 1,
+                //     regions: [
+                //         {
+                //             start: 1,
+                //             end: 3,
+                //             loop: false,
+                //             color: 'hsla(400, 100%, 30%, 0.5)'
+                //         },
+                //     ],
+                //     dragSelection: {
+                //         slop: 5
+                //     }
+                // })
+
+            ]
         });
         wavesurfer.load(defaultSound)
 
-        console.log("running wave useffect")
+        if (micState) {
+            wavesurfer.microphone.start()
+        }
+
+        if (!micState) {
+            wavesurfer.microphone.stop()
+        }
+
+        console.log("running wavesurfer useffect")
+        console.log(wavesurfer)
 
         return function () {
+            // wavesurfer.regions.destroy()
+            // wavesurfer.microphone.destroy()
             wavesurfer.destroy()
         }
 
-    }, [defaultSound]);
+    }, [defaultSound, micState]);
 
     React.useEffect(() => {
 
@@ -89,6 +126,7 @@ export default function Display() {
             release: 1,
 
         }).toDestination();
+
 
         console.log("running tone sample useffect")
 
@@ -184,6 +222,9 @@ export default function Display() {
     }
 
     React.useEffect(() => {
+
+        console.log("running micstate useffect")
+
         toggleRecording()
 
     }, [micState])
@@ -205,7 +246,7 @@ export default function Display() {
 
     function toggleRecording() {
         if (micState === true) {
-            // micImg.setAttribute("style", "background-color:red")
+            //micImg.setAttribute("style", "background-color:red")
             startRecording()
 
         } else {
@@ -271,12 +312,6 @@ export default function Display() {
     }
 
 
-
-
-
-
-
-
     function getButtons() {
 
         let sampleElements = []
@@ -293,16 +328,42 @@ export default function Display() {
     })
 
 
+    function FileMenu(props) {
+        return (
+            <div className="menu">
+                <div className="label">Menu</div>
+                <div className="spacer"></div>
+                <label name="sound-file">
+                    <div className="item"><span>Load Sound</span></div>
+                    <input type="file" id="sound-file" hidden accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
+                </label>
+                <div className="item"><span>Set Sample Relase</span></div>
+            </div>
+        )
+    }
+
+    function OpenMenu() {
+        return (
+            <div className="load-container">
+                <label name="sound-file">
+                    {/* <img className="open-logo" src={OpenLogo} alt="open"></img> */}
+                    <span className="load-sound">LOAD SOUND</span>
+                    <input type="file" id="sound-file" hidden accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
+                </label>
+                {mediaBlobUrl ? <a download="Sample" href={mediaBlobUrl} className="load-sound">D/L SAMPLE</a> : ""}
+            </div>
+        )
+    }
+
     return (
         <div className="ui-container">
-            <input type="file" className="sound-file" accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
             <div id="waveform" className="wave-display"></div>
+            <OpenMenu />
             {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleStop} src={StopLogo} alt="stop"></img>}
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
             <div className="transport">
                 {samples}
             </div>
-            <div className="download"></div>
         </div>
     )
 }
