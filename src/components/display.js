@@ -13,6 +13,7 @@ import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import { useReactMediaRecorder } from "react-media-recorder"
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
 import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
+import { PolySynth } from 'tone'
 
 
 
@@ -37,11 +38,12 @@ export default function Display() {
 
     const [octave, setOctave] = React.useState(4)
 
+    const [theRelease, setTheRelease] = React.useState(4)
+
     const [defaultSound, setDefaultSound] = React.useState(Kick)
 
     const [stopIt, setStopIt] = React.useState(null)
 
-    const firstRender = useRef(true)
 
     const { status,
         startRecording,
@@ -123,7 +125,7 @@ export default function Display() {
             urls: {
                 "C4": defaultSound
             },
-            release: 1,
+
 
         }).toDestination();
 
@@ -198,7 +200,6 @@ export default function Display() {
 
     }
 
-
     function toggleLeft() {
         setOctave(prev => {
             let newOct = prev
@@ -261,51 +262,51 @@ export default function Display() {
 
         switch (pad) {
             case "1": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`C${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "2": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`C#${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "3": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`D${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "4": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`D#${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "5": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`E${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "6": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`F${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "7": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`F#${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "8": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`G${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "9": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`G#${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "10": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`A${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "11": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`A#${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
             case "12": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`B${octave}`], 4, Tone.context.currentTime);
+                sampler.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
             })
                 break;
         }

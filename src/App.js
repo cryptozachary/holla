@@ -10,9 +10,7 @@ function App() {
     <div className="main-app-body">
       <Header />
       <div className="app">
-
         <Display />
-
       </div>
     </div>
   )
