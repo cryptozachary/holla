@@ -13,7 +13,7 @@ import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import { useReactMediaRecorder } from "react-media-recorder"
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
 import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
-import { PolySynth } from 'tone'
+
 
 
 
@@ -25,6 +25,7 @@ export default function Display() {
     console.log("app render")
 
     let micImg = document.querySelector(".mic-logo")
+    let stopImg = document.querySelector(".stop-logo")
     let waver = document.querySelector(".wave-display")
     const deviceLabel = document.querySelector(".download")
     let soundFile = document.querySelector(".sound-file")
@@ -252,6 +253,7 @@ export default function Display() {
 
         } else {
             stopRecording()
+            // stopImg.style.backgroundColor = "red";
             // micImg.setAttribute("style", "background-color:initial")
         }
     }
