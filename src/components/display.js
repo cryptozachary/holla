@@ -14,13 +14,9 @@ import { useReactMediaRecorder } from "react-media-recorder"
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
 import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
 
+export default function Display(props) {
 
-
-
-
-
-
-export default function Display() {
+    const { effectsToggle, setEffectsToggle } = props
 
     console.log("app render")
 
@@ -45,14 +41,14 @@ export default function Display() {
 
     const [stopIt, setStopIt] = React.useState(null)
 
-
+    // Media Recorder Settings
     const { status,
         startRecording,
         stopRecording,
         mediaBlobUrl } =
         useReactMediaRecorder({ audio: true });
 
-
+    //Updating the defaultsound state when mediablob/sound is changed
     React.useEffect(() => {
 
         if (mediaBlobUrl) {
@@ -66,6 +62,7 @@ export default function Display() {
 
     }, [mediaBlobUrl])
 
+    //Renders wavesurfer and updates when defaultsound changes and/or mic turns on/off
     React.useEffect(() => {
         // Create a wavesurfer object
         // More info about options here https://wavesurfer-js.org/docs/options.html
@@ -120,6 +117,8 @@ export default function Display() {
 
     }, [defaultSound, micState]);
 
+
+    //renders tone sampler and updates when defaultsound changes or octave of sample changes
     React.useEffect(() => {
 
         sampler = new Tone.Sampler({
@@ -139,6 +138,72 @@ export default function Display() {
 
     }, [octave, defaultSound])
 
+    // beggning of settings functionality 
+    React.useEffect(() => {
+
+        switch (true) {
+            case effectsToggle[0]: console.log("Connect Reverb")
+                return;
+        }
+        switch (true) {
+            case effectsToggle[1]: console.log("Connect Delay")
+                return;
+        }
+        switch (true) {
+            case effectsToggle[2]: console.log("Connect Stereo")
+                return;
+        }
+        switch (true) {
+            case effectsToggle[3]: console.log("Connect Distortion")
+                return;
+        }
+        switch (true) {
+            case effectsToggle[4]: console.log("Connect Phaser")
+                return;
+        }
+        switch (true) {
+            case effectsToggle[5]: console.log("Connect Chorus")
+                return;
+        }
+        switch (true) {
+            case effectsToggle[6]: console.log("Connect Crusher")
+                return;
+        }
+
+        switch (false) {
+            case effectsToggle[0]: console.log("Disconnect Reverb")
+                return;
+        }
+        switch (false) {
+            case effectsToggle[1]: console.log("Disconnect Delay")
+                return;
+        }
+        switch (false) {
+            case effectsToggle[2]: console.log("Disconnect Stereo")
+                return;
+        }
+        switch (false) {
+            case effectsToggle[3]: console.log("Disconnect Distortion")
+                return;
+        }
+        switch (false) {
+            case effectsToggle[4]: console.log("Disconnect Phaser")
+                return;
+        }
+        switch (false) {
+            case effectsToggle[5]: console.log("Disconnect Chorus")
+                return;
+        }
+        switch (false) {
+            case effectsToggle[6]: console.log("Disconnect Crusher")
+                return;
+        }
+
+    }, [effectsToggle])
+
+
+
+    //load sound for wavesurfer and tone sampler
     function loadSound(e) {
 
         const file = e.target.files[0];
@@ -201,6 +266,7 @@ export default function Display() {
 
     }
 
+    //left octave button functionality
     function toggleLeft() {
         setOctave(prev => {
             let newOct = prev
@@ -212,6 +278,7 @@ export default function Display() {
         })
     }
 
+    //left octave button functionality
     function toggleRight() {
         setOctave(prev => {
             let newOct = prev
@@ -223,6 +290,7 @@ export default function Display() {
         })
     }
 
+    //activates toggleRecording based on micState
     React.useEffect(() => {
 
         console.log("running micstate useffect")
@@ -231,13 +299,14 @@ export default function Display() {
 
     }, [micState])
 
+    // toggles micState ( used for mic img logo on UI )
     function toggleMic() {
         setMicState(prev => {
             return !prev
         })
     }
 
-
+    //toggles micState (used for stop logo on UI)
     function toggleStop() {
         setMicState(prev => {
             return !prev
@@ -246,6 +315,8 @@ export default function Display() {
 
     console.log(`mic state is ${micState}`)
 
+
+    // startts and stop audio recording based on micState
     function toggleRecording() {
         if (micState === true) {
             //micImg.setAttribute("style", "background-color:red")
@@ -258,6 +329,7 @@ export default function Display() {
         }
     }
 
+    // sample pads connected to the tone sampler
     function padClick(pad) {
 
         console.log(pad, "was clicked")
@@ -314,7 +386,7 @@ export default function Display() {
         }
     }
 
-
+    // buttons created for mapping 
     function getButtons() {
 
         let sampleElements = []
@@ -326,6 +398,7 @@ export default function Display() {
         return sampleElements
     }
 
+    //map buttonss to UI
     let samples = buttonState.map((item, index) => {
         return <Buttons handleClick={() => padClick(item.name)} key={index} padName={item.name}></Buttons>
     })
@@ -345,7 +418,8 @@ export default function Display() {
         )
     }
 
-    function OpenMenu() {
+    // load button on UI to load a sound
+    function LoadButton() {
         return (
             <div className="load-container">
                 <label name="sound-file">
@@ -361,7 +435,7 @@ export default function Display() {
     return (
         <div className="ui-container">
             <div id="waveform" className="wave-display"></div>
-            <OpenMenu />
+            <LoadButton />
             {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleStop} src={StopLogo} alt="stop"></img>}
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
             <div className="transport">

@@ -1,30 +1,95 @@
 import PacLogo from "../images/pac.png"
 import React, { useState, useEffect } from "react"
-import Effects from "./Effects"
-import EffectsData from "./EffectsData"
+import Effects from "./effects"
+import EffectsData from "./effectsData"
 
-export default function Header() {
+export default function Header(props) {
+
+    const { effectsToggle, setEffectsToggle } = props
 
     const [modalShow, setModalShow] = useState(false)
-
-    const [effectsToggle, setEffectsToggle] = useState(EffectsData)
-
 
     const modalStyle = {
         display: !modalShow ? "none" : "block"
     }
 
     function toggleSettings(effectPosition) {
-        const updatedCheckedState = effectsToggle.map((effect, index) =>
-            index === effectPosition ? !effect : effect
-        );
+        let updatedCheckedState = effectsToggle.map((effect, index) => {
+            return index === effectPosition ? !effect : effect
+        });
 
-        setEffectsToggle(updatedCheckedState);
+
+        setEffectsToggle(updatedCheckedState)
+
     }
+
+    // useEffect(() => {
+
+    //     switch (true) {
+    //         case effectsToggle[0]: console.log("Connect Reverb")
+    //             return;
+    //     }
+    //     switch (true) {
+    //         case effectsToggle[1]: console.log("Connect Delay")
+    //             return;
+    //     }
+    //     switch (true) {
+    //         case effectsToggle[2]: console.log("Connect Stereo")
+    //             return;
+    //     }
+    //     switch (true) {
+    //         case effectsToggle[3]: console.log("Connect Distortion")
+    //             return;
+    //     }
+    //     switch (true) {
+    //         case effectsToggle[4]: console.log("Connect Phaser")
+    //             return;
+    //     }
+    //     switch (true) {
+    //         case effectsToggle[5]: console.log("Connect Chorus")
+    //             return;
+    //     }
+    //     switch (true) {
+    //         case effectsToggle[6]: console.log("Connect Crusher")
+    //             return;
+    //     }
+
+    //     switch (false) {
+    //         case effectsToggle[0]: console.log("Disconnect Reverb")
+    //             return;
+    //     }
+    //     switch (false) {
+    //         case effectsToggle[1]: console.log("Disconnect Delay")
+    //             return;
+    //     }
+    //     switch (false) {
+    //         case effectsToggle[2]: console.log("Disconnect Stereo")
+    //             return;
+    //     }
+    //     switch (false) {
+    //         case effectsToggle[3]: console.log("Disconnect Distortion")
+    //             return;
+    //     }
+    //     switch (false) {
+    //         case effectsToggle[4]: console.log("Disconnect Phaser")
+    //             return;
+    //     }
+    //     switch (false) {
+    //         case effectsToggle[5]: console.log("Disconnect Chorus")
+    //             return;
+    //     }
+    //     switch (false) {
+    //         case effectsToggle[6]: console.log("Disconnect Crusher")
+    //             return;
+    //     }
+
+
+
+
+    // }, [effectsToggle])
 
     function showModal() {
         setModalShow(!modalShow)
-        console.log(modalShow)
     }
 
     function aboutModal() {
@@ -48,65 +113,9 @@ export default function Header() {
             </nav>
             <div style={modalStyle} className="settings-container">
                 <div className="settings-modal">
-
-                    <div>
-                        <label htmlFor="reverb" className="switch">
-                            <input className="effect" name="reverb" id="reverb" type="checkbox" checked={setEffectsToggle[0]} onChange={() => toggleSettings(0)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="reverb-tag">Reverb</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="delay" className="switch">
-                            <input className="effect" name="delay" id="delay" type="checkbox" checked={setEffectsToggle[1]} onChange={() => toggleSettings(1)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="delay-tag">Delay</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="stereo" className="switch">
-                            <input className="effect" name="stereo" id="stereo" type="checkbox" checked={setEffectsToggle[2]} onChange={() => toggleSettings(2)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="stereo-tag">Stereo Widener</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="distortion" className="switch">
-                            <input className="effect" name="distortion" id="distortion" type="checkbox" checked={setEffectsToggle[3]} onChange={() => toggleSettings(3)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="distortion-tag">Distortion</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="phaser" className="switch">
-                            <input className="effect" name="phaser" id="phaser" type="checkbox" checked={setEffectsToggle[4]} onChange={() => toggleSettings(4)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="phaser-tag">Phaser</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="chorus" className="switch">
-                            <input className="effect" id="chorus" name="chorus" type="checkbox" checked={setEffectsToggle[5]} onChange={() => toggleSettings(5)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="chorus-tag">Chorus</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="bitcrusher" className="switch">
-                            <input className="effect" name="bitcrusher" id="bitcrusher" type="checkbox" checked={setEffectsToggle[6]} onChange={() => toggleSettings(6)}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <p className="bitcrusher-tag">Bit Crusher</p>
-                    </div>
-
+                    <Effects effectsToggle={effectsToggle} onChange={toggleSettings} />
                 </div>
-                {console.log(document.querySelectorAll('.switch'))}
+
             </div>
 
         </div>
