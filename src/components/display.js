@@ -13,10 +13,11 @@ import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import { useReactMediaRecorder } from "react-media-recorder"
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
 import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
+import { Delay, FeedbackDelay, Reverb } from 'tone'
 
 export default function Display(props) {
 
-    const { effectsToggle, setEffectsToggle } = props
+    const { effectsToggle, setEffectsToggle, verbDecay } = props
 
     console.log("app render")
 
@@ -28,6 +29,9 @@ export default function Display(props) {
     let sound;
     let sampler;
     let wavesurfer;
+    const reverb = new Reverb(verbDecay)
+    const delay = new FeedbackDelay(0.5, 0.9)
+    console.log(delay)
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -126,8 +130,7 @@ export default function Display(props) {
                 "C4": defaultSound
             },
 
-
-        }).toDestination();
+        })
 
 
         console.log("running tone sample useffect")
@@ -136,17 +139,19 @@ export default function Display(props) {
             sampler.dispose()
         }
 
-    }, [octave, defaultSound])
+    }, [octave, defaultSound, effectsToggle])
+
+
 
     // beggning of settings functionality 
     React.useEffect(() => {
-
+        console.log(sampler)
         switch (true) {
-            case effectsToggle[0]: console.log("Connect Reverb")
+            case effectsToggle[0]: Tone.loaded().then(() => { sampler.connect(reverb).toDestination() })
                 return;
         }
         switch (true) {
-            case effectsToggle[1]: console.log("Connect Delay")
+            case effectsToggle[1]: sampler.connect(delay).toDestination()
                 return;
         }
         switch (true) {
@@ -200,8 +205,6 @@ export default function Display(props) {
         }
 
     }, [effectsToggle])
-
-
 
     //load sound for wavesurfer and tone sampler
     function loadSound(e) {
@@ -332,7 +335,7 @@ export default function Display(props) {
     // sample pads connected to the tone sampler
     function padClick(pad) {
 
-        console.log(pad, "was clicked")
+        console.log(pad, "was clicked", sampler)
 
         switch (pad) {
             case "1": Tone.loaded().then(() => {
