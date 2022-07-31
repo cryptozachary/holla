@@ -11,7 +11,7 @@ function Effects({ effectsToggle, onChange }) {
 
             <div>
                 <label htmlFor="reverb" className="switch">
-                    <input className="effect" name="reverb" id="reverb" type="checkbox" checked={effectsToggle[0].state} onChange={() => onChange(0)}></input>
+                    <input className="effect" name="reverb" id="reverb" type="checkbox" checked={effectsToggle[0]} onChange={() => onChange(0)}></input>
                     <span className="slider round"></span>
                 </label>
                 <p className="reverb-tag">Reverb</p>
@@ -19,7 +19,7 @@ function Effects({ effectsToggle, onChange }) {
 
             <div>
                 <label htmlFor="delay" className="switch">
-                    <input className="effect" name="delay" id="delay" type="checkbox" checked={effectsToggle[1].state} onChange={() => onChange(1)}></input>
+                    <input className="effect" name="delay" id="delay" type="checkbox" checked={effectsToggle[1]} onChange={() => onChange(1)}></input>
                     <span className="slider round"></span>
                 </label>
                 <p className="delay-tag">Delay</p>

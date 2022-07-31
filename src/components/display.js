@@ -128,7 +128,7 @@ export default function Display(props) {
                 "C4": defaultSound
             },
 
-        })
+        }).toDestination()
 
 
         console.log("running tone sample useffect")
@@ -141,70 +141,26 @@ export default function Display(props) {
 
     const reverb = new Reverb(verbDecay).toDestination()
     const delay = new FeedbackDelay(0.5, 0.9).toDestination()
-    console.log(delay)
+    const effArr = [reverb, delay]
+    console.log(effArr)
+
+    function runEffect() {
+        for (let i = 0; i <= 1; i++) {
+            switch (true) {
+                case effectsToggle[i]: sampler.connect(effArr[i]).toDestination()
+            }
+
+        }
+
+    }
 
     // beggning of settings functionality 
     React.useEffect(() => {
 
-        switch (true) {
-            case effectsToggle[0]: Tone.loaded().then(() => { sampler.connect(reverb).toDestination() })
-                return;
-        }
-        switch (true) {
-            case effectsToggle[1]: Tone.loaded().then(() => { sampler.connect(delay).toDestination() })
-                return;
-        }
-        switch (true) {
-            case effectsToggle[2]: console.log("Connect Stereo")
-                return;
-        }
-        switch (true) {
-            case effectsToggle[3]: console.log("Connect Distortion")
-                return;
-        }
-        switch (true) {
-            case effectsToggle[4]: console.log("Connect Phaser")
-                return;
-        }
-        switch (true) {
-            case effectsToggle[5]: console.log("Connect Chorus")
-                return;
-        }
-        switch (true) {
-            case effectsToggle[6]: console.log("Connect Crusher")
-                return;
-        }
-
-        switch (false) {
-            case effectsToggle[0]: console.log("Disconnect Reverb")
-                return;
-        }
-        switch (false) {
-            case effectsToggle[1]: console.log("Disconnect Delay")
-                return;
-        }
-        switch (false) {
-            case effectsToggle[2]: console.log("Disconnect Stereo")
-                return;
-        }
-        switch (false) {
-            case effectsToggle[3]: console.log("Disconnect Distortion")
-                return;
-        }
-        switch (false) {
-            case effectsToggle[4]: console.log("Disconnect Phaser")
-                return;
-        }
-        switch (false) {
-            case effectsToggle[5]: console.log("Disconnect Chorus")
-                return;
-        }
-        switch (false) {
-            case effectsToggle[6]: console.log("Disconnect Crusher")
-                return;
-        }
+        runEffect()
 
     }, [effectsToggle])
+
     console.log(sampler)
     //load sound for wavesurfer and tone sampler
     function loadSound(e) {
