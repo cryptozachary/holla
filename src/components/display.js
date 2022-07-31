@@ -29,9 +29,7 @@ export default function Display(props) {
     let sound;
     let sampler;
     let wavesurfer;
-    const reverb = new Reverb(verbDecay)
-    const delay = new FeedbackDelay(0.5, 0.9)
-    console.log(delay)
+
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -141,17 +139,19 @@ export default function Display(props) {
 
     }, [octave, defaultSound, effectsToggle])
 
-
+    const reverb = new Reverb(verbDecay).toDestination()
+    const delay = new FeedbackDelay(0.5, 0.9).toDestination()
+    console.log(delay)
 
     // beggning of settings functionality 
     React.useEffect(() => {
-        console.log(sampler)
+
         switch (true) {
             case effectsToggle[0]: Tone.loaded().then(() => { sampler.connect(reverb).toDestination() })
                 return;
         }
         switch (true) {
-            case effectsToggle[1]: sampler.connect(delay).toDestination()
+            case effectsToggle[1]: Tone.loaded().then(() => { sampler.connect(delay).toDestination() })
                 return;
         }
         switch (true) {
@@ -205,7 +205,7 @@ export default function Display(props) {
         }
 
     }, [effectsToggle])
-
+    console.log(sampler)
     //load sound for wavesurfer and tone sampler
     function loadSound(e) {
 

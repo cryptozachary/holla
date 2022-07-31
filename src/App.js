@@ -3,8 +3,8 @@ import Header from "./components/header"
 import Display from "./components/display"
 import Buttons from "./components/buttons"
 import Media from "./components/Media"
-import { Effects } from "./components/effects"
-import EffectsData from "./components/effectsData"
+import { Effects } from "./components/Effects"
+import EffectsData from "./components/EffectsData"
 
 
 

@@ -1,7 +1,7 @@
 import PacLogo from "../images/pac.png"
 import React, { useState, useEffect } from "react"
-import Effects from "./effects"
-import EffectsData from "./effectsData"
+import Effects from "./Effects"
+import EffectsData from "./EffectsData"
 
 export default function Header(props) {
 
