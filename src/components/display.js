@@ -13,7 +13,7 @@ import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import { useReactMediaRecorder } from "react-media-recorder"
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
 import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
-import { Delay, FeedbackDelay, Reverb } from 'tone'
+import { Delay, FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
 
 export default function Display(props) {
 
@@ -39,9 +39,11 @@ export default function Display(props) {
 
     const [theRelease, setTheRelease] = React.useState(4)
 
-    const [defaultSound, setDefaultSound] = React.useState(Kick)
+    const [defaultSound, setDefaultSound] = React.useState(Kick) || null
 
     const [stopIt, setStopIt] = React.useState(null)
+
+    const theWave = useRef()
 
     // Media Recorder Settings
     const { status,
@@ -62,6 +64,10 @@ export default function Display(props) {
 
         console.log("running mediablob useffect")
 
+        return function () {
+
+        }
+
     }, [mediaBlobUrl])
 
     //Renders wavesurfer and updates when defaultsound changes and/or mic turns on/off
@@ -69,7 +75,7 @@ export default function Display(props) {
         // Create a wavesurfer object
         // More info about options here https://wavesurfer-js.org/docs/options.html
         wavesurfer = WaveSurfer.create({
-            container: "#waveform",
+            container: theWave.current,
             waveColor: "red",
             height: 140,
             barGap: 0.3,
@@ -117,7 +123,7 @@ export default function Display(props) {
             wavesurfer.destroy()
         }
 
-    }, [defaultSound, micState]);
+    }, [micState]);
 
 
     //renders tone sampler and updates when defaultsound changes or octave of sample changes
@@ -141,23 +147,41 @@ export default function Display(props) {
 
     const reverb = new Reverb(verbDecay).toDestination()
     const delay = new FeedbackDelay(0.5, 0.9).toDestination()
-    const effArr = [reverb, delay]
-    console.log(effArr)
+    const stereo = new StereoWidener(1).toDestination()
+    const distortion = new Distortion(0.5).toDestination()
+    const phaser = new Phaser({
+        frequency: 15,
+        octaves: 5,
+        baseFrequency: 1000
+    }).toDestination()
+    const chorus = new Chorus(4, 2.5, 0.5).toDestination()
+    const crusher = new BitCrusher(9).toDestination()
 
-    function runEffect() {
-        for (let i = 0; i <= 1; i++) {
+    const effArr = [reverb, delay, stereo, distortion, phaser, chorus, crusher]
+
+    function connectEffect() {
+        for (let i = 0; i <= effArr.length; i++) {
             switch (true) {
-                case effectsToggle[i]: sampler.connect(effArr[i]).toDestination()
+                case effectsToggle[i]: sampler.connect(effArr[i])
+
             }
-
         }
+    }
 
+    function disconnectEffect() {
+        for (let i = 0; i <= effArr.length; i++) {
+            switch (false) {
+                case effectsToggle[i]: sampler.disconnect(effArr[i])
+
+            }
+        }
     }
 
     // beggning of settings functionality 
     React.useEffect(() => {
 
-        runEffect()
+        connectEffect()
+
 
     }, [effectsToggle])
 
@@ -393,7 +417,7 @@ export default function Display(props) {
 
     return (
         <div className="ui-container">
-            <div id="waveform" className="wave-display"></div>
+            <div ref={theWave} id="waveform" className="wave-display"></div>
             <LoadButton />
             {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleStop} src={StopLogo} alt="stop"></img>}
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />

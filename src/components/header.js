@@ -83,9 +83,6 @@ export default function Header(props) {
     //             return;
     //     }
 
-
-
-
     // }, [effectsToggle])
 
     function showModal() {

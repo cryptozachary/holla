@@ -192,8 +192,7 @@ a:visited {
 .settings-container {
   display: none;
   position: absolute;
-  top: 23%;
-  left: 38.25%;
+
   width: 278px;
   height: 280px;
   border: 3px solid black;
