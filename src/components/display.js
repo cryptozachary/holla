@@ -14,22 +14,15 @@ import { useReactMediaRecorder } from "react-media-recorder"
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
 import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
 import { Delay, FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
+import LoadButton from './loadbutton'
+import MicButton from './micbutton'
+import { effArr } from './effects2'
 
 export default function Display(props) {
 
     const { effectsToggle, setEffectsToggle, verbDecay } = props
 
     console.log("app render")
-
-    let micImg = document.querySelector(".mic-logo")
-    let stopImg = document.querySelector(".stop-logo")
-    let waver = document.querySelector(".wave-display")
-    const deviceLabel = document.querySelector(".download")
-    let soundFile = document.querySelector(".sound-file")
-    let sound;
-    let sampler;
-    let wavesurfer;
-
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -39,33 +32,50 @@ export default function Display(props) {
 
     const [theRelease, setTheRelease] = React.useState(4)
 
-    const [defaultSound, setDefaultSound] = React.useState(Kick) || null
+    const [defaultSound, setDefaultSound] = React.useState(Kick)
 
     const [stopIt, setStopIt] = React.useState(null)
 
-    const theWave = useRef()
+    const wavesurfer = useRef()
+
+    const theSampler = useRef()
+
+    // let samp = new Tone.Sampler({
+    //     urls: {
+    //         "C4": defaultSound
+    //     },
+
+    // }).toDestination()
+
+
+
 
     // Media Recorder Settings
     const { status,
         startRecording,
         stopRecording,
+        clearBlobUrl,
         mediaBlobUrl } =
         useReactMediaRecorder({ audio: true });
 
     //Updating the defaultsound state when mediablob/sound is changed
     React.useEffect(() => {
 
-        if (mediaBlobUrl) {
-            setDefaultSound(prev => {
-                let newDef = mediaBlobUrl
-                return newDef
-            })
+        let isMounted = true
+
+        if (isMounted) {
+            if (mediaBlobUrl) {
+                setDefaultSound(prev => {
+                    let newDef = mediaBlobUrl
+                    return newDef
+                })
+            }
+
+            console.log("running mediablob useffect")
         }
-
-        console.log("running mediablob useffect")
-
         return function () {
 
+            isMounted = false
         }
 
     }, [mediaBlobUrl])
@@ -74,96 +84,95 @@ export default function Display(props) {
     React.useEffect(() => {
         // Create a wavesurfer object
         // More info about options here https://wavesurfer-js.org/docs/options.html
-        wavesurfer = WaveSurfer.create({
-            container: theWave.current,
-            waveColor: "red",
-            height: 140,
-            barGap: 0.3,
-            barWidth: 1,
-            barRadius: 3,
-            cursorWidth: 3,
-            cursorColor: "#56w7FFF",
-            plugins: [
 
-                MicrophonePlugin.create()
-                // RegionsPlugin.create({
-                //     regionsMinLength: 1,
-                //     maxRegions: 1,
-                //     regions: [
-                //         {
-                //             start: 1,
-                //             end: 3,
-                //             loop: false,
-                //             color: 'hsla(400, 100%, 30%, 0.5)'
-                //         },
-                //     ],
-                //     dragSelection: {
-                //         slop: 5
-                //     }
-                // })
+        let isMounted = true
+        if (isMounted) {
+            wavesurfer.current = WaveSurfer.create({
+                container: '#waveform',
+                waveColor: "red",
+                height: 140,
+                barGap: 0.3,
+                barWidth: 1,
+                barRadius: 3,
+                cursorWidth: 3,
+                cursorColor: "#56w7FFF",
+                plugins: [
 
-            ]
-        });
-        wavesurfer.load(defaultSound)
+                    MicrophonePlugin.create()
+                    // RegionsPlugin.create({
+                    //     regionsMinLength: 1,
+                    //     maxRegions: 1,
+                    //     regions: [
+                    //         {
+                    //             start: 1,
+                    //             end: 3,
+                    //             loop: false,
+                    //             color: 'hsla(400, 100%, 30%, 0.5)'
+                    //         },
+                    //     ],
+                    //     dragSelection: {
+                    //         slop: 5
+                    //     }
+                    // })
 
-        if (micState) {
-            wavesurfer.microphone.start()
+                ]
+            });
+            wavesurfer.current.load(defaultSound)
+
+            if (micState) {
+                wavesurfer.current.microphone.start()
+            }
+
+            if (!micState) {
+                wavesurfer.current.microphone.stop()
+            }
+
+            console.log("running wavesurfer useffect")
+            console.log(wavesurfer.current)
         }
-
-        if (!micState) {
-            wavesurfer.microphone.stop()
-        }
-
-        console.log("running wavesurfer useffect")
-        console.log(wavesurfer)
-
         return function () {
             // wavesurfer.regions.destroy()
             // wavesurfer.microphone.destroy()
-            wavesurfer.destroy()
+
+            wavesurfer.current.destroy()
+            console.log('Still alive surfer?', wavesurfer)
+            isMounted = false
         }
 
-    }, [micState]);
+    }, [defaultSound, micState]);
 
 
     //renders tone sampler and updates when defaultsound changes or octave of sample changes
     React.useEffect(() => {
 
-        sampler = new Tone.Sampler({
-            urls: {
-                "C4": defaultSound
-            },
+        let isMounted = true
 
-        }).toDestination()
+        if (isMounted) {
+            theSampler.current = new Tone.Sampler({
+                urls: {
+                    "C4": defaultSound
+                },
 
+            }).toDestination()
 
-        console.log("running tone sample useffect")
+            console.log("running tone sample useffect")
+        }
 
         return function () {
-            sampler.dispose()
+
+            theSampler.current.dispose()
+            console.log('Still alive sampler?', theSampler)
+            isMounted = false
+
         }
 
     }, [octave, defaultSound, effectsToggle])
 
-    const reverb = new Reverb(verbDecay).toDestination()
-    const delay = new FeedbackDelay(0.5, 0.9).toDestination()
-    const stereo = new StereoWidener(1).toDestination()
-    const distortion = new Distortion(0.5).toDestination()
-    const phaser = new Phaser({
-        frequency: 15,
-        octaves: 5,
-        baseFrequency: 1000
-    }).toDestination()
-    const chorus = new Chorus(4, 2.5, 0.5).toDestination()
-    const crusher = new BitCrusher(9).toDestination()
-
-    const effArr = [reverb, delay, stereo, distortion, phaser, chorus, crusher]
 
     function connectEffect() {
         for (let i = 0; i <= effArr.length; i++) {
             switch (true) {
-                case effectsToggle[i]: sampler.connect(effArr[i])
-
+                case effectsToggle[i]: theSampler.current.connect(effArr[i])
             }
         }
     }
@@ -171,7 +180,7 @@ export default function Display(props) {
     function disconnectEffect() {
         for (let i = 0; i <= effArr.length; i++) {
             switch (false) {
-                case effectsToggle[i]: sampler.disconnect(effArr[i])
+                case effectsToggle[i]: theSampler.current.disconnect(effArr[i])
 
             }
         }
@@ -182,10 +191,9 @@ export default function Display(props) {
 
         connectEffect()
 
-
     }, [effectsToggle])
 
-    console.log(sampler)
+    console.log(theSampler.current)
     //load sound for wavesurfer and tone sampler
     function loadSound(e) {
 
@@ -287,6 +295,8 @@ export default function Display(props) {
         setMicState(prev => {
             return !prev
         })
+
+
     }
 
     //toggles micState (used for stop logo on UI)
@@ -315,56 +325,56 @@ export default function Display(props) {
     // sample pads connected to the tone sampler
     function padClick(pad) {
 
-        console.log(pad, "was clicked", sampler)
+        console.log(pad, "was clicked", theSampler.current)
 
         switch (pad) {
-            case "1": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "1": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "2": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "2": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "3": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "3": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "4": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "4": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "5": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "5": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "6": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "6": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "7": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "7": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "8": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "8": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "9": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "9": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "10": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "10": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "11": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "11": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
-            case "12": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
-            })
+            case "12": theSampler.current.releaseAll(Tone.context.now());
+                theSampler.current.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
+
                 break;
         }
     }
@@ -386,40 +396,11 @@ export default function Display(props) {
         return <Buttons handleClick={() => padClick(item.name)} key={index} padName={item.name}></Buttons>
     })
 
-
-    function FileMenu(props) {
-        return (
-            <div className="menu">
-                <div className="label">Menu</div>
-                <div className="spacer"></div>
-                <label name="sound-file">
-                    <div className="item"><span>Load Sound</span></div>
-                    <input type="file" id="sound-file" hidden accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
-                </label>
-                <div className="item"><span>Set Sample Relase</span></div>
-            </div>
-        )
-    }
-
-    // load button on UI to load a sound
-    function LoadButton() {
-        return (
-            <div className="load-container">
-                <label name="sound-file">
-                    {/* <img className="open-logo" src={OpenLogo} alt="open"></img> */}
-                    <span className="load-sound">LOAD SOUND</span>
-                    <input type="file" id="sound-file" hidden accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
-                </label>
-                {mediaBlobUrl ? <a download="Sample" href={mediaBlobUrl} className="load-sound">D/L SAMPLE</a> : ""}
-            </div>
-        )
-    }
-
     return (
         <div className="ui-container">
-            <div ref={theWave} id="waveform" className="wave-display"></div>
-            <LoadButton />
-            {micState === false ? <img className="mic-logo" onClick={toggleMic} src={MicLogo} alt="mic"></img> : <img className="stop-logo" onClick={toggleStop} src={StopLogo} alt="stop"></img>}
+            <div useRef={wavesurfer} id="waveform" className="wave-display"></div>
+            <LoadButton mediaBlobUrl={mediaBlobUrl} loadSound={loadSound} />
+            <MicButton micState={micState} toggleMic={toggleMic} MicLogo={MicLogo} StopLogo={StopLogo} toggleStop={toggleStop} />
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
             <div className="transport">
                 {samples}

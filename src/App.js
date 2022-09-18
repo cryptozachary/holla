@@ -19,7 +19,6 @@ function App() {
   //reverb decay state
   const [verbDecay, setVerbDecay] = React.useState(9000)
 
-  console.log(EffectsData, effectsToggle)
 
 
   return (
