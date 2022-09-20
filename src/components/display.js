@@ -2,23 +2,26 @@ import React, { useRef } from 'react'
 import Buttons from "./buttons"
 import MicLogo from "../images/mic.svg"
 import StopLogo from "../images/stop.png"
-import OpenLogo from "../images/opensound2.svg"
+//import OpenLogo from "../images/opensound2.svg"
 import WaveSurfer from "wavesurfer.js"
 import * as Tone from "tone"
 import Kick from "../audio/808.wav"
-import Song from "../audio/song.wav"
+//import Song from "../audio/song.wav"
 import Octaves from "./octaves"
-import RegionsPlugin from 'wavesurfer.js/src/plugin/regions/index.js'
+//import RegionsPlugin from 'wavesurfer.js/src/plugin/regions/index.js'
 import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import { useReactMediaRecorder } from "react-media-recorder"
-import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
-import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
-import { Delay, FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
+//import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline/index.js'
+//import CursorPlugin from 'wavesurfer.js/src/plugin/cursor/index.js'
 import LoadButton from './loadbutton'
 import MicButton from './micbutton'
 import { effArr } from './effects2'
 
 export default function Display(props) {
+
+    let wavesurfer
+
+    let theSampler
 
     const { effectsToggle, setEffectsToggle, verbDecay } = props
 
@@ -34,11 +37,13 @@ export default function Display(props) {
 
     const [defaultSound, setDefaultSound] = React.useState(Kick)
 
-    const [stopIt, setStopIt] = React.useState(null)
+    const waveContainer = useRef()
 
-    const wavesurfer = useRef()
+    const currentSound = useRef(defaultSound)
 
-    const theSampler = useRef()
+
+
+    // const theSampler = useRef()
 
     // let samp = new Tone.Sampler({
     //     urls: {
@@ -49,34 +54,25 @@ export default function Display(props) {
 
 
 
-
     // Media Recorder Settings
-    const { status,
+    const {
         startRecording,
         stopRecording,
-        clearBlobUrl,
         mediaBlobUrl } =
         useReactMediaRecorder({ audio: true });
 
     //Updating the defaultsound state when mediablob/sound is changed
     React.useEffect(() => {
 
-        let isMounted = true
-
-        if (isMounted) {
-            if (mediaBlobUrl) {
-                setDefaultSound(prev => {
-                    let newDef = mediaBlobUrl
-                    return newDef
-                })
-            }
-
-            console.log("running mediablob useffect")
+        if (mediaBlobUrl) {
+            setDefaultSound(prev => {
+                let newDefsound = mediaBlobUrl
+                return newDefsound
+            })
         }
-        return function () {
 
-            isMounted = false
-        }
+        console.log("running mediablob useffect")
+
 
     }, [mediaBlobUrl])
 
@@ -85,58 +81,53 @@ export default function Display(props) {
         // Create a wavesurfer object
         // More info about options here https://wavesurfer-js.org/docs/options.html
 
-        let isMounted = true
-        if (isMounted) {
-            wavesurfer.current = WaveSurfer.create({
-                container: '#waveform',
-                waveColor: "red",
-                height: 140,
-                barGap: 0.3,
-                barWidth: 1,
-                barRadius: 3,
-                cursorWidth: 3,
-                cursorColor: "#56w7FFF",
-                plugins: [
+        wavesurfer = WaveSurfer.create({
+            container: waveContainer.current,
+            waveColor: "red",
+            height: 140,
+            barGap: 0.3,
+            barWidth: 1,
+            barRadius: 3,
+            cursorWidth: 3,
+            cursorColor: "#56w7FFF",
+            plugins: [
 
-                    MicrophonePlugin.create()
-                    // RegionsPlugin.create({
-                    //     regionsMinLength: 1,
-                    //     maxRegions: 1,
-                    //     regions: [
-                    //         {
-                    //             start: 1,
-                    //             end: 3,
-                    //             loop: false,
-                    //             color: 'hsla(400, 100%, 30%, 0.5)'
-                    //         },
-                    //     ],
-                    //     dragSelection: {
-                    //         slop: 5
-                    //     }
-                    // })
+                MicrophonePlugin.create()
+                // RegionsPlugin.create({
+                //     regionsMinLength: 1,
+                //     maxRegions: 1,
+                //     regions: [
+                //         {
+                //             start: 1,
+                //             end: 3,
+                //             loop: false,
+                //             color: 'hsla(400, 100%, 30%, 0.5)'
+                //         },
+                //     ],
+                //     dragSelection: {
+                //         slop: 5
+                //     }
+                // })
 
-                ]
-            });
-            wavesurfer.current.load(defaultSound)
+            ]
+        });
+        wavesurfer.load(defaultSound)
 
-            if (micState) {
-                wavesurfer.current.microphone.start()
-            }
-
-            if (!micState) {
-                wavesurfer.current.microphone.stop()
-            }
-
-            console.log("running wavesurfer useffect")
-            console.log(wavesurfer.current)
+        if (micState) {
+            wavesurfer.microphone.start()
         }
-        return function () {
-            // wavesurfer.regions.destroy()
-            // wavesurfer.microphone.destroy()
 
-            wavesurfer.current.destroy()
+        if (!micState) {
+            wavesurfer.microphone.stop()
+        }
+
+        console.log("running wavesurfer useffect")
+        console.log(wavesurfer)
+
+        return function () {
+            wavesurfer.destroy()
             console.log('Still alive surfer?', wavesurfer)
-            isMounted = false
+
         }
 
     }, [defaultSound, micState]);
@@ -145,24 +136,23 @@ export default function Display(props) {
     //renders tone sampler and updates when defaultsound changes or octave of sample changes
     React.useEffect(() => {
 
-        let isMounted = true
+        theSampler = new Tone.Sampler({
+            urls: {
+                "C4": defaultSound
+            },
+            release: '1',
 
-        if (isMounted) {
-            theSampler.current = new Tone.Sampler({
-                urls: {
-                    "C4": defaultSound
-                },
 
-            }).toDestination()
+        }).toDestination();
 
-            console.log("running tone sample useffect")
-        }
+        console.log("running tone sample useffect")
+
 
         return function () {
 
-            theSampler.current.dispose()
+            theSampler.dispose(theSampler)
             console.log('Still alive sampler?', theSampler)
-            isMounted = false
+
 
         }
 
@@ -189,11 +179,11 @@ export default function Display(props) {
     // beggning of settings functionality 
     React.useEffect(() => {
 
-        connectEffect()
+
 
     }, [effectsToggle])
 
-    console.log(theSampler.current)
+
     //load sound for wavesurfer and tone sampler
     function loadSound(e) {
 
@@ -309,7 +299,7 @@ export default function Display(props) {
     console.log(`mic state is ${micState}`)
 
 
-    // startts and stop audio recording based on micState
+    // starts and stop audio recording based on micState
     function toggleRecording() {
         if (micState === true) {
             //micImg.setAttribute("style", "background-color:red")
@@ -325,55 +315,55 @@ export default function Display(props) {
     // sample pads connected to the tone sampler
     function padClick(pad) {
 
-        console.log(pad, "was clicked", theSampler.current)
+        console.log(pad, "was clicked", theSampler)
 
         switch (pad) {
-            case "1": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
+            case "1": theSampler.releaseAll(Tone.context.currentTime)
+                theSampler.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "2": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
+            case "2": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "3": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
+            case "3": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "4": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
+            case "4": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "5": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
+            case "5": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "6": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
+            case "6": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "7": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
+            case "7": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "8": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
+            case "8": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "9": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
+            case "9": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "10": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
+            case "10": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "11": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
+            case "11": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "12": theSampler.current.releaseAll(Tone.context.now());
-                theSampler.current.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
+            case "12": theSampler.releaseAll(Tone.context.currentTime);
+                theSampler.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
         }
@@ -391,14 +381,14 @@ export default function Display(props) {
         return sampleElements
     }
 
-    //map buttonss to UI
+    //map buttons to UI
     let samples = buttonState.map((item, index) => {
         return <Buttons handleClick={() => padClick(item.name)} key={index} padName={item.name}></Buttons>
     })
 
     return (
         <div className="ui-container">
-            <div useRef={wavesurfer} id="waveform" className="wave-display"></div>
+            <div ref={waveContainer} id="waveform" className="wave-display"></div>
             <LoadButton mediaBlobUrl={mediaBlobUrl} loadSound={loadSound} />
             <MicButton micState={micState} toggleMic={toggleMic} MicLogo={MicLogo} StopLogo={StopLogo} toggleStop={toggleStop} />
             <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />

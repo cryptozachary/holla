@@ -1,7 +1,6 @@
 import PacLogo from "../images/pac.png"
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import Effects from "./Effects"
-import EffectsData from "./EffectsData"
 
 export default function Header(props) {
 
@@ -22,68 +21,6 @@ export default function Header(props) {
         setEffectsToggle(updatedCheckedState)
 
     }
-
-    // useEffect(() => {
-
-    //     switch (true) {
-    //         case effectsToggle[0]: console.log("Connect Reverb")
-    //             return;
-    //     }
-    //     switch (true) {
-    //         case effectsToggle[1]: console.log("Connect Delay")
-    //             return;
-    //     }
-    //     switch (true) {
-    //         case effectsToggle[2]: console.log("Connect Stereo")
-    //             return;
-    //     }
-    //     switch (true) {
-    //         case effectsToggle[3]: console.log("Connect Distortion")
-    //             return;
-    //     }
-    //     switch (true) {
-    //         case effectsToggle[4]: console.log("Connect Phaser")
-    //             return;
-    //     }
-    //     switch (true) {
-    //         case effectsToggle[5]: console.log("Connect Chorus")
-    //             return;
-    //     }
-    //     switch (true) {
-    //         case effectsToggle[6]: console.log("Connect Crusher")
-    //             return;
-    //     }
-
-    //     switch (false) {
-    //         case effectsToggle[0]: console.log("Disconnect Reverb")
-    //             return;
-    //     }
-    //     switch (false) {
-    //         case effectsToggle[1]: console.log("Disconnect Delay")
-    //             return;
-    //     }
-    //     switch (false) {
-    //         case effectsToggle[2]: console.log("Disconnect Stereo")
-    //             return;
-    //     }
-    //     switch (false) {
-    //         case effectsToggle[3]: console.log("Disconnect Distortion")
-    //             return;
-    //     }
-    //     switch (false) {
-    //         case effectsToggle[4]: console.log("Disconnect Phaser")
-    //             return;
-    //     }
-    //     switch (false) {
-    //         case effectsToggle[5]: console.log("Disconnect Chorus")
-    //             return;
-    //     }
-    //     switch (false) {
-    //         case effectsToggle[6]: console.log("Disconnect Crusher")
-    //             return;
-    //     }
-
-    // }, [effectsToggle])
 
     function showModal() {
         setModalShow(!modalShow)

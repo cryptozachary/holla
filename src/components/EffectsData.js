@@ -1,5 +1,3 @@
-import Header from "./header"
-
 const effectObj =
     [
         {
