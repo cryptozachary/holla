@@ -1,4 +1,4 @@
-const effectObj =
+let effectObj =
     [
         {
             name: "reverb",

@@ -11,10 +11,10 @@ import EffectsData from "./components/EffectsData"
 function App() {
 
   // new array to convert object to booleans 
-  const effArr = new Array(EffectsData.length).fill(false)
+  //const effArr = new Array(EffectsData.length).fill(false)
 
   // state of effect toggles
-  const [effectsToggle, setEffectsToggle] = React.useState(effArr)
+  const [effectsToggle, setEffectsToggle] = React.useState(EffectsData)
 
   //reverb decay state
   const [verbDecay, setVerbDecay] = React.useState(9000)

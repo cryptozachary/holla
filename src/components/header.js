@@ -12,16 +12,22 @@ export default function Header(props) {
         display: !modalShow ? "none" : "block"
     }
 
+    // updates the settings toggle to on or off
     function toggleSettings(effectPosition) {
         let updatedCheckedState = effectsToggle.map((effect, index) => {
-            return index === effectPosition ? !effect : effect
+            if (effect.key == effectPosition) {
+                return { ...effect, state: !effect.state }
+            }
+            return { ...effect }
         });
 
-
-        setEffectsToggle(updatedCheckedState)
+        setEffectsToggle(prev => {
+            return updatedCheckedState
+        })
 
     }
 
+    //displays settings menu
     function showModal() {
         setModalShow(!modalShow)
     }

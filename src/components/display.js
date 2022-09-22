@@ -17,15 +17,14 @@ import LoadButton from './loadbutton'
 import MicButton from './micbutton'
 import { effArr } from './effects2'
 
+
 export default function Display(props) {
 
-    let wavesurfer
+    console.log("app render")
 
-    let theSampler
 
     const { effectsToggle, setEffectsToggle, verbDecay } = props
 
-    console.log("app render")
 
     const [buttonState, setButtonState] = React.useState(getButtons())
 
@@ -38,6 +37,10 @@ export default function Display(props) {
     const [defaultSound, setDefaultSound] = React.useState(Kick)
 
     const waveContainer = useRef()
+
+    const wavesurfer = useRef()
+
+    let theSampler;
 
     const currentSound = useRef(defaultSound)
 
@@ -79,13 +82,13 @@ export default function Display(props) {
     //Renders wavesurfer and updates when defaultsound changes and/or mic turns on/off
     React.useEffect(() => {
         // Create a wavesurfer object
-        // More info about options here https://wavesurfer-js.org/docs/options.html
 
-        wavesurfer = WaveSurfer.create({
+        wavesurfer.current = WaveSurfer.create({
             container: waveContainer.current,
             waveColor: "red",
             height: 140,
             barGap: 0.3,
+            backend: 'MediaElementWebAudio',
             barWidth: 1,
             barRadius: 3,
             cursorWidth: 3,
@@ -111,23 +114,26 @@ export default function Display(props) {
 
             ]
         });
-        wavesurfer.load(defaultSound)
+        wavesurfer.current.load(defaultSound)
+
+
 
         if (micState) {
-            wavesurfer.microphone.start()
+            wavesurfer.current.microphone.start()
         }
 
         if (!micState) {
-            wavesurfer.microphone.stop()
+            wavesurfer.current.microphone.stop()
         }
 
         console.log("running wavesurfer useffect")
         console.log(wavesurfer)
 
         return function () {
-            wavesurfer.destroy()
+            wavesurfer.current.destroy()
+            //wavesurfer.current.backend.destroy()
+            // wavesurfer.current.backend = null
             console.log('Still alive surfer?', wavesurfer)
-
         }
 
     }, [defaultSound, micState]);
@@ -147,39 +153,48 @@ export default function Display(props) {
 
         console.log("running tone sample useffect")
 
+        connectEffect()
+
 
         return function () {
 
-            theSampler.dispose(theSampler)
+            theSampler.dispose('theSampler')
             console.log('Still alive sampler?', theSampler)
-
-
         }
 
     }, [octave, defaultSound, effectsToggle])
 
-
+    //connect and disconnect effect when effect turned on/off
     function connectEffect() {
-        for (let i = 0; i <= effArr.length; i++) {
-            switch (true) {
-                case effectsToggle[i]: theSampler.current.connect(effArr[i])
+
+        let selected = []
+
+        effectsToggle.forEach((effect, index, arr) => {
+            if (effect.state === true) {
+                theSampler.connect(effArr[index])
+                selected.push(index)
+                console.log(selected)
             }
+        })
+
+        console.log(selected)
+
+        if (selected) {
+            selected.forEach((effectposition) => {
+                if (effectsToggle[effectposition].state === false) {
+                    theSampler.disconnect(effArr[effectposition])
+                }
+            })
         }
+
+
     }
 
-    function disconnectEffect() {
-        for (let i = 0; i <= effArr.length; i++) {
-            switch (false) {
-                case effectsToggle[i]: theSampler.current.disconnect(effArr[i])
 
-            }
-        }
-    }
-
-    // beggning of settings functionality 
+    //calls function to turn on/off effects
     React.useEffect(() => {
 
-
+        connectEffect()
 
     }, [effectsToggle])
 
@@ -188,51 +203,57 @@ export default function Display(props) {
     function loadSound(e) {
 
         const file = e.target.files[0];
-        const fileList = e.target.files
+        const fileList = e.target.files;
         console.log(file, fileList);
 
-        if (file) {
+        // if (file) {
 
-            let reader = new FileReader();
+        //     let reader = new FileReader();
 
-            // Read File as an ArrayBuffer
-            reader.readAsArrayBuffer(file);
-            reader.onload = function (evt) {
-                // Create a Blob providing as first argument a typed array with the file buffer
-                const result = evt.target.result
-                console.log(result)
-                let blob = new Blob([new Uint8Array(evt.target.result)]);
-                console.log(blob)
-                // Load the blob into Wavesurfer
-                wavesurfer.loadBlob(blob);
+        //     // Read File as an ArrayBuffer
+        //     reader.readAsArrayBuffer(file);
 
-            };
-
-            reader.onerror = function (evt) {
-                console.error("An error ocurred reading the file: ", evt);
-            };
+        //     reader.onload = function (evt) {
+        //         // Create a Blob providing as first argument a typed array with the file buffer
+        //         let result = evt.target.result
+        //         console.log(result)
+        //         let blob = new Blob([new Uint8Array(evt.target.result)]);
+        //         console.log(blob)
+        //         // Load the blob into Wavesurfer
+        //         wavesurfer.loadBlob(blob);
 
 
-        }
+
+        //     };
+
+        //     reader.onerror = function (evt) {
+        //         console.error("An error ocurred reading the file: ", evt);
+        //     };
+
+
+        // }
 
         if (file) {
 
             let reader2 = new FileReader();
 
-            // Read File as an ArrayBuffer
+            // Read File as an data url
             reader2.readAsDataURL(file);
             reader2.onload = function (evt) {
                 // Create a Blob providing as first argument a typed array with the file buffer
-                const result = evt.target.result
+                let result = evt.target.result
                 console.log(result)
-                let blob2 = new Blob([new Uint8Array(evt.target.result)]);
-                console.log(result)
+                console.log(reader2)
 
+
+                //set the loaded sound in defaultsound
                 setDefaultSound(prev => {
                     let newDef = result
                     console.log(newDef)
                     return newDef
                 })
+
+
 
 
             };
@@ -318,7 +339,7 @@ export default function Display(props) {
         console.log(pad, "was clicked", theSampler)
 
         switch (pad) {
-            case "1": theSampler.releaseAll(Tone.context.currentTime)
+            case "1": theSampler.releaseAll(Tone.context.currentTime);
                 theSampler.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
