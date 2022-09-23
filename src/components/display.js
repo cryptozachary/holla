@@ -16,12 +16,17 @@ import MicButton from './micbutton'
 
 
 
-export default function Display() {
+
+
+export default function Display(props) {
 
     console.log("app render")
 
+    const { effectsToggle, setEffectsToggle, verbDecay } = props
+
 
     let sampler;
+
     const wavesurfer = useRef()
 
     const [buttonState, setButtonState] = React.useState(getButtons())
@@ -131,6 +136,45 @@ export default function Display() {
         }
 
     }, [octave, defaultSound])
+
+
+
+    // //connect and disconnect effect when effect turned on/off
+    // function connectEffect() {
+
+    //     let selected = []
+
+    //     effectsToggle.forEach((effect, index, arr) => {
+    //         if (effect.state === true) {
+    //             sampler.disconnect()
+    //             sampler.connect(effArr[index].toDestination())
+    //             selected.push(index)
+    //             console.log(selected)
+    //         }
+    //     })
+
+    //     console.log(selected)
+
+    //     if (selected) {
+    //         selected.forEach((effectposition) => {
+    //             if (effectsToggle[effectposition].state === false) {
+    //                 sampler.disconnect(effArr[effectposition])
+
+    //             }
+    //         })
+
+    //     }
+
+
+    // }
+
+
+    // //calls function to turn on/off effects
+    // React.useEffect(() => {
+
+    //     connectEffect()
+
+    // }, [effectsToggle])
 
 
     //load sound for wavesurfer and tone sampler
