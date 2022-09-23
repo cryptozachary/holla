@@ -1,7 +1,4 @@
 import React from 'react'
-import EffectsData from "./EffectsData"
-import * as Tone from "tone"
-import { Reverb } from 'tone'
 
 function Effects({ effectsToggle, onChange }) {
 

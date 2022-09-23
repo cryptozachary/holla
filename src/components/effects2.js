@@ -1,9 +1,5 @@
 import { FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
 
-
-//reverb decay state
-// const [verbDecay, setVerbDecay] = useState(9000)
-
 export const reverb = new Reverb(9000).toDestination()
 export const delay = new FeedbackDelay(0.5, 0.9).toDestination()
 export const stereo = new StereoWidener(1).toDestination()

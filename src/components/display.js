@@ -20,10 +20,11 @@ import { effArr } from './effects2'
 
 export default function Display(props) {
 
+
     console.log("app render")
 
-
     const { effectsToggle, setEffectsToggle, verbDecay } = props
+
 
 
     const [buttonState, setButtonState] = React.useState(getButtons())
@@ -40,9 +41,9 @@ export default function Display(props) {
 
     const wavesurfer = useRef()
 
-    let theSampler;
+    const theSampler = useRef()
 
-    const currentSound = useRef(defaultSound)
+    //const currentSound = useRef(defaultSound)
 
 
 
@@ -61,6 +62,7 @@ export default function Display(props) {
     const {
         startRecording,
         stopRecording,
+        clearBlobUrl,
         mediaBlobUrl } =
         useReactMediaRecorder({ audio: true });
 
@@ -69,8 +71,7 @@ export default function Display(props) {
 
         if (mediaBlobUrl) {
             setDefaultSound(prev => {
-                let newDefsound = mediaBlobUrl
-                return newDefsound
+                return mediaBlobUrl
             })
         }
 
@@ -114,10 +115,11 @@ export default function Display(props) {
 
             ]
         });
+
+        //load sound
         wavesurfer.current.load(defaultSound)
 
-
-
+        // start/stop mic recording visual
         if (micState) {
             wavesurfer.current.microphone.start()
         }
@@ -125,6 +127,8 @@ export default function Display(props) {
         if (!micState) {
             wavesurfer.current.microphone.stop()
         }
+
+
 
         console.log("running wavesurfer useffect")
         console.log(wavesurfer)
@@ -142,7 +146,7 @@ export default function Display(props) {
     //renders tone sampler and updates when defaultsound changes or octave of sample changes
     React.useEffect(() => {
 
-        theSampler = new Tone.Sampler({
+        theSampler.current = new Tone.Sampler({
             urls: {
                 "C4": defaultSound
             },
@@ -158,7 +162,7 @@ export default function Display(props) {
 
         return function () {
 
-            theSampler.dispose('theSampler')
+            theSampler.current.dispose('theSampler')
             console.log('Still alive sampler?', theSampler)
         }
 
@@ -171,7 +175,7 @@ export default function Display(props) {
 
         effectsToggle.forEach((effect, index, arr) => {
             if (effect.state === true) {
-                theSampler.connect(effArr[index])
+                theSampler.current.connect(effArr[index])
                 selected.push(index)
                 console.log(selected)
             }
@@ -182,9 +186,11 @@ export default function Display(props) {
         if (selected) {
             selected.forEach((effectposition) => {
                 if (effectsToggle[effectposition].state === false) {
-                    theSampler.disconnect(effArr[effectposition])
+                    theSampler.current.disconnect(effArr[effectposition])
+
                 }
             })
+
         }
 
 
@@ -243,13 +249,12 @@ export default function Display(props) {
                 // Create a Blob providing as first argument a typed array with the file buffer
                 let result = evt.target.result
                 console.log(result)
-                console.log(reader2)
+
 
 
                 //set the loaded sound in defaultsound
                 setDefaultSound(prev => {
                     let newDef = result
-                    console.log(newDef)
                     return newDef
                 })
 
@@ -303,18 +308,25 @@ export default function Display(props) {
 
     // toggles micState ( used for mic img logo on UI )
     function toggleMic() {
+
+
         setMicState(prev => {
             return !prev
         })
+
+
 
 
     }
 
     //toggles micState (used for stop logo on UI)
     function toggleStop() {
+
         setMicState(prev => {
             return !prev
         })
+
+
     }
 
     console.log(`mic state is ${micState}`)
@@ -339,52 +351,52 @@ export default function Display(props) {
         console.log(pad, "was clicked", theSampler)
 
         switch (pad) {
-            case "1": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
+            case "1": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`C${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "2": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
+            case "2": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`C#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "3": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
+            case "3": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`D${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "4": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
+            case "4": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`D#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "5": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
+            case "5": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`E${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "6": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
+            case "6": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`F${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "7": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
+            case "7": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`F#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "8": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
+            case "8": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`G${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "9": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
+            case "9": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`G#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "10": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
+            case "10": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`A${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "11": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
+            case "11": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`A#${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
-            case "12": theSampler.releaseAll(Tone.context.currentTime);
-                theSampler.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
+            case "12": theSampler.current.releaseAll(Tone.context.currentTime);
+                theSampler.current.triggerAttackRelease([`B${octave}`], theRelease, Tone.context.currentTime);
 
                 break;
         }
