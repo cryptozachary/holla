@@ -1,6 +1,6 @@
 import { FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
 
-export const reverb = new Reverb(9000)
+export const reverb = new Reverb(2)
 export const delay = new FeedbackDelay(0.5, 0.9)
 export const stereo = new StereoWidener(1)
 export const distortion = new Distortion(0.5)

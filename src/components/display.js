@@ -12,7 +12,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import LoadButton from './loadbutton'
 import MicButton from './micbutton'
-
+import { effArr } from './effects2'
 
 
 
@@ -135,46 +135,46 @@ export default function Display(props) {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound])
+    }, [octave, defaultSound, effectsToggle])
 
 
 
-    // //connect and disconnect effect when effect turned on/off
-    // function connectEffect() {
+    //connect and disconnect effect when effect turned on/off
+    function connectEffect() {
 
-    //     let selected = []
+        let selected = []
 
-    //     effectsToggle.forEach((effect, index, arr) => {
-    //         if (effect.state === true) {
-    //             sampler.disconnect()
-    //             sampler.connect(effArr[index].toDestination())
-    //             selected.push(index)
-    //             console.log(selected)
-    //         }
-    //     })
+        //loop through effectsToggle and connect effect if toggle switched on (true)
+        effectsToggle.forEach((effect, index, arr) => {
+            if (effect.state === true) {
+                sampler.disconnect()
+                sampler.connect(effArr[index].toDestination())
+                selected.push(index)
+                console.log(selected)
+            }
+        })
 
-    //     console.log(selected)
+        //loop through effectsToggle and connect effect if toggle switched of (false)
+        if (selected) {
+            selected.forEach((effectposition) => {
+                if (effectsToggle[effectposition].state === false) {
+                    sampler.disconnect(effArr[effectposition])
 
-    //     if (selected) {
-    //         selected.forEach((effectposition) => {
-    //             if (effectsToggle[effectposition].state === false) {
-    //                 sampler.disconnect(effArr[effectposition])
+                }
+            })
 
-    //             }
-    //         })
-
-    //     }
-
-
-    // }
+        }
 
 
-    // //calls function to turn on/off effects
-    // React.useEffect(() => {
+    }
 
-    //     connectEffect()
 
-    // }, [effectsToggle])
+    //calls function to turn on/off effects
+    React.useEffect(() => {
+
+        connectEffect()
+
+    }, [effectsToggle])
 
 
     //load sound for wavesurfer and tone sampler
@@ -222,9 +222,7 @@ export default function Display(props) {
                 console.log(result)
 
                 setDefaultSound(prev => {
-                    let newDef = result
-                    console.log(newDef)
-                    return newDef
+                    return result
                 })
 
 
@@ -299,52 +297,64 @@ export default function Display(props) {
 
         switch (pad) {
             case "1": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`C${octave}`], 4, Tone.context.currentTime);
-            })
+                sampler.releaseAll(Tone.context.currentTime);
+                sampler.triggerAttack([`C${octave}`], Tone.context.currentTime);
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "2": Tone.loaded().then(() => {
-                sampler.triggerAttackRelease([`C#${octave}`], 4, Tone.context.currentTime);
-            })
+                sampler.releaseAll(Tone.context.currentTime);
+                sampler.triggerAttackRelease([`C#${octave}`], 1, Tone.context.currentTime);
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "3": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`D${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "4": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`D#${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "5": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`E${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "6": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`F${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "7": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`F#${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "8": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`G${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "9": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`G#${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "10": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`A${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "11": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`A#${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
             case "12": Tone.loaded().then(() => {
+                sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttackRelease([`B${octave}`], 4, Tone.context.currentTime);
-            })
+            }).catch(() => console.log('Tone not loaded'))
                 break;
         }
     }
