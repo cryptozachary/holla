@@ -12,14 +12,14 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import LoadButton from './loadbutton'
 import MicButton from './micbutton'
-import { effArr } from './effects2'
-import { effectParams } from './effects2'
+//import { effArr } from './effects2'
+//import { effectParams } from './effects2'
 
 export default function Display(props) {
 
     console.log("app render")
 
-    const { effectsToggle, setEffectsToggle, verbDecay } = props
+    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams } = props
 
 
     let sampler;

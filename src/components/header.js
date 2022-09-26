@@ -4,7 +4,7 @@ import Effects from "./effects"
 
 export default function Header(props) {
 
-    const { effectsToggle, setEffectsToggle } = props
+    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams } = props
 
     const [modalShow, setModalShow] = useState(false)
 
@@ -53,7 +53,13 @@ export default function Header(props) {
             </nav>
             <div style={modalStyle} className="settings-container">
                 <div className="settings-modal">
-                    <Effects effectsToggle={effectsToggle} onChange={toggleSettings} />
+                    <Effects
+                        effArr={effArr}
+                        effectParams={effectParams}
+                        setEffectParams={setEffectParams}
+                        effectsToggle={effectsToggle}
+                        onChange={toggleSettings}
+                    />
                 </div>
 
             </div>
