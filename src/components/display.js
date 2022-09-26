@@ -13,10 +13,7 @@ import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import LoadButton from './loadbutton'
 import MicButton from './micbutton'
 import { effArr } from './effects2'
-
-
-
-
+import { effectParams } from './effects2'
 
 export default function Display(props) {
 
@@ -135,7 +132,7 @@ export default function Display(props) {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound, effectsToggle])
+    }, [octave, defaultSound, effectsToggle, effectParams])
 
 
 
@@ -147,7 +144,6 @@ export default function Display(props) {
         //loop through effectsToggle and connect effect if toggle switched on (true)
         effectsToggle.forEach((effect, index, arr) => {
             if (effect.state === true) {
-                sampler.disconnect()
                 sampler.connect(effArr[index].toDestination())
                 selected.push(index)
                 console.log(selected)
@@ -159,7 +155,6 @@ export default function Display(props) {
             selected.forEach((effectposition) => {
                 if (effectsToggle[effectposition].state === false) {
                     sampler.disconnect(effArr[effectposition])
-
                 }
             })
 
@@ -174,7 +169,7 @@ export default function Display(props) {
 
         connectEffect()
 
-    }, [effectsToggle])
+    }, [effectsToggle, octave, effectParams])
 
 
     //load sound for wavesurfer and tone sampler

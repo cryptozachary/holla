@@ -1,20 +1,42 @@
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
+import { effectParams } from "./effects2"
 
 function Effects({ effectsToggle, onChange }) {
 
-    console.log(effectsToggle[0].state)
+    const reverbRangeInput = useRef()
+
+    const reverbRangeDiv = useRef()
+
+    const setValue = () => {
+        console.log(effectParams.verbDecay)
+        const newValue = Number((reverbRangeInput.current.value - reverbRangeInput.current.min) * 100 / (reverbRangeInput.current.max - reverbRangeInput.current.min))
+        const newPosition = 10 - (newValue * 0.2);
+        reverbRangeDiv.current.innerHTML = `<span>${reverbRangeInput.current.value}</span>`;
+        reverbRangeDiv.current.style.left = `calc(${newValue}% + (${newPosition}px))`;
+        effectParams.verbDecay = Math.floor(newValue)
+        console.log(effectParams.verbDecay)
+    };
+
+    useEffect(() => {
+        setValue()
+    }, [])
+
 
     // toggle switches for effects
     return (
         <div>
 
-            <div>
+            <div className='slider-flex-container'>
                 <label htmlFor="reverb" className="switch">
                     <input className="effect" name="reverb" id="reverb" type="checkbox" checked={effectsToggle[0].state} onChange={() => onChange(0)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="reverb-tag">Reverb</p>
-            </div>
+                <p>Reverb</p>
+                <div className="reverb-tag range-wrap">
+                    <div ref={reverbRangeDiv} className="range-value" id="rangeV"></div>
+                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="10" step='0.1' onInput={setValue}></input>
+                </div>
+            </div >
 
             <div>
                 <label htmlFor="delay" className="switch">
@@ -64,7 +86,7 @@ function Effects({ effectsToggle, onChange }) {
                 <p className="bitcrusher-tag">Bit Crusher</p>
             </div>
 
-        </div>
+        </div >
     )
 }
 

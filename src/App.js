@@ -16,11 +16,6 @@ function App() {
   // state of effect toggles
   const [effectsToggle, setEffectsToggle] = React.useState(EffectsData)
 
-  //reverb decay state
-  const [verbDecay, setVerbDecay] = React.useState(9000)
-
-
-
   return (
     <div className="main-app-body">
       <Header effectsToggle={effectsToggle} setEffectsToggle={setEffectsToggle} />
@@ -28,7 +23,6 @@ function App() {
         <Display
           effectsToggle={effectsToggle}
           setEffectsToggle={setEffectsToggle}
-          verbDecay={verbDecay}
         />
       </div>
     </div>
