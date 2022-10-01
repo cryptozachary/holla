@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react'
 
 function Effects(props) {
 
-    const { effectsToggle, onChange, effArr, effectParams, setEffectParams } = props
+    const { effectsToggle, onChange, effArr, effectParams, setEffectParams, setEffArr } = props
 
     const reverbRangeInput = useRef()
 
@@ -18,11 +18,10 @@ function Effects(props) {
         const newPosition = 10 - (newValue * 0.2);
         reverbRangeDiv.current.innerHTML = `<span>${reverbRangeInput.current.value}</span>`;
         reverbRangeDiv.current.style.left = `calc(${newValue}% + (${newPosition}px))`;
-        effectParams.current.verbDecay = Math.floor(newValue + 1)
-        // setEffectParams(prev => {
-        //     return { ...prev, verbDecay: Math.floor(newValue + 1) }
-        // })
-        console.log(effectParams.current.verbDecay)
+        setEffectParams(prev => {
+            return { ...prev, verbDecay: Math.floor(newValue + 1) }
+        })
+        console.log(effectParams.verbDecay)
     };
 
 

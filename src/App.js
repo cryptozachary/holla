@@ -11,6 +11,7 @@ import { FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, C
 
 function App() {
 
+  console.log("app render")
   // new array to convert object to booleans 
   //const effArr = new Array(EffectsData.length).fill(false)
 
@@ -18,7 +19,7 @@ function App() {
   const [effectsToggle, setEffectsToggle] = React.useState(EffectsData)
 
   // effect parameters
-  const effectParams = useRef({
+  const [effectParams, setEffectParams] = useState({
     verbDecay: 1,
     delayTime: 0.5,
     delayFeedback: 0.1,
@@ -33,45 +34,53 @@ function App() {
     crusherBits: 9
   })
 
-  // instances of effects created/assigned
-  function createEffects() {
+  // instances of effects created
+  let reverb = new Reverb(effectParams.verbDecay)
+  let delay = new FeedbackDelay(effectParams.delayTime, effectParams.delayFeedback)
+  let stereo = new StereoWidener(effectParams.stereoWidth)
+  let distortion = new Distortion(effectParams.distort)
+  let phaser = new Phaser({
+    frequency: effectParams.phaserFreq,
+    octaves: effectParams.phaserOctaves,
+    baseFrequency: effectParams.phaserBaseFreq
+  })
+  let chorus = new Chorus(effectParams.chorusFreq, effectParams.chorusDelayTime, effectParams.chorusDepth)
+  let crusher = new BitCrusher(effectParams.crusherBits)
 
-    const reverb = new Reverb(effectParams.current.verbDecay)
-    const delay = new FeedbackDelay(effectParams.current.delayTime, effectParams.current.delayFeedback)
-    const stereo = new StereoWidener(effectParams.current.stereoWidth)
-    const distortion = new Distortion(effectParams.current.distort)
-    const phaser = new Phaser({
-      frequency: effectParams.current.phaserFreq,
-      octaves: effectParams.current.phaserOctaves,
-      baseFrequency: effectParams.current.phaserBaseFreq
-    })
-    const chorus = new Chorus(effectParams.current.chorusFreq, effectParams.current.chorusDelayTime, effectParams.current.chorusDepth)
-    const crusher = new BitCrusher(effectParams.current.crusherBits)
+  // array of created effects
+  let effArr = [reverb, delay, stereo, distortion, phaser, chorus, crusher]
 
-    // array of created effects
-    const effArr = [reverb, delay, stereo, distortion, phaser, chorus, crusher]
+  useEffect(() => {
 
-    return effArr
-
-  }
+    return function () {
+      reverb = null
+      delay = null
+      stereo = null
+      distortion = null
+      phaser = null
+      chorus = null
+      crusher = null
+      effArr = null
+    }
+  })
 
 
   return (
     <div className="main-app-body">
 
       <Header
-        effArr={createEffects()}
+        effArr={effArr}
         effectParams={effectParams}
-        // setEffectParams={setEffectParams}
+        setEffectParams={setEffectParams}
         effectsToggle={effectsToggle}
         setEffectsToggle={setEffectsToggle}
       />
 
       <div className="app">
         <Display
-          effArr={createEffects()}
+          effArr={effArr}
           effectParams={effectParams}
-          // setEffectParams={setEffectParams}
+          setEffectParams={setEffectParams}
           effectsToggle={effectsToggle}
           setEffectsToggle={setEffectsToggle}
         />

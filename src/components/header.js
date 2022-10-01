@@ -4,7 +4,7 @@ import Effects from "./effects"
 
 export default function Header(props) {
 
-    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams } = props
+    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams, setEffArr } = props
 
     const [modalShow, setModalShow] = useState(false)
 
@@ -56,6 +56,7 @@ export default function Header(props) {
                 <div className="settings-modal">
                     <Effects
                         effArr={effArr}
+                        setEffArr={setEffArr}
                         effectParams={effectParams}
                         setEffectParams={setEffectParams}
                         effectsToggle={effectsToggle}

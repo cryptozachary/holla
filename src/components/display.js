@@ -17,7 +17,7 @@ import MicButton from './micbutton'
 
 export default function Display(props) {
 
-    console.log("app render")
+    console.log("display render")
 
     const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams } = props
 
@@ -135,7 +135,7 @@ export default function Display(props) {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound, effectsToggle])
+    }, [octave, defaultSound, effectsToggle, effectParams])
 
 
 
@@ -174,7 +174,7 @@ export default function Display(props) {
         connectEffect()
         console.log('Running connect effect')
 
-    }, [effectsToggle, octave])
+    }, [effectsToggle, octave, effectParams])
 
 
     //load sound for wavesurfer and tone sampler
