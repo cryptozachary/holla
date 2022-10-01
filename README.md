@@ -1,6 +1,6 @@
 Holla’ at Me
 
-Preview - https://ezmanagers.com/Projects/Holla/index.html
+Preview - https://ezmanagers.com/projects/Holla/index.html
  
 Allow users to record audio notes and/or record audio samples for music creation. 
 Users can save their thoughts on the go and playback at a later time or use the app as a sampler to record sounds for playback in their music projects. 
