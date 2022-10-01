@@ -8,6 +8,7 @@ export default function Header(props) {
 
     const [modalShow, setModalShow] = useState(false)
 
+    // toggles settings based on display
     const modalStyle = {
         display: !modalShow ? "none" : "block"
     }

@@ -5,25 +5,27 @@ function Effects(props) {
 
     const { effectsToggle, onChange, effArr, effectParams, setEffectParams } = props
 
-
     const reverbRangeInput = useRef()
 
     const reverbRangeDiv = useRef()
 
+    let effectSet = true;
+
     const setValue = () => {
-        const newValue = Number((reverbRangeInput.current.value - reverbRangeInput.current.min) * 2 / (reverbRangeInput.current.max - reverbRangeInput.current.min))
+
+
+        const newValue = Number((reverbRangeInput.current.value - reverbRangeInput.current.min) / (reverbRangeInput.current.max - reverbRangeInput.current.min));
         const newPosition = 10 - (newValue * 0.2);
         reverbRangeDiv.current.innerHTML = `<span>${reverbRangeInput.current.value}</span>`;
         reverbRangeDiv.current.style.left = `calc(${newValue}% + (${newPosition}px))`;
-        setEffectParams(prev => {
-            return { ...prev, verbDecay: Math.floor(newValue + 1) }
-        })
-        console.log(effectParams.verbDecay)
+        effectParams.current.verbDecay = Math.floor(newValue + 1)
+        // setEffectParams(prev => {
+        //     return { ...prev, verbDecay: Math.floor(newValue + 1) }
+        // })
+        console.log(effectParams.current.verbDecay)
     };
 
-    useEffect(() => {
-        setValue()
-    }, [])
+
 
 
     // toggle switches for effects
@@ -38,7 +40,7 @@ function Effects(props) {
                 <p>Reverb</p>
                 <div className="reverb-tag range-wrap">
                     <div ref={reverbRangeDiv} className="range-value" id="rangeV"></div>
-                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="2" step='0.1' onInput={setValue}></input>
+                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="2" step='0.1' onChange={setValue}></input>
                 </div>
             </div >
 

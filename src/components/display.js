@@ -26,11 +26,13 @@ export default function Display(props) {
 
     const wavesurfer = useRef()
 
+    const [octave, setOctave] = React.useState(4)
+
     const [buttonState, setButtonState] = React.useState(getButtons())
 
     const [micState, setMicState] = React.useState(false)
 
-    const [octave, setOctave] = React.useState(4)
+
 
     const [defaultSound, setDefaultSound] = React.useState(Kick)
 
@@ -126,13 +128,14 @@ export default function Display(props) {
 
         }).toDestination();
 
+
         console.log("running tone sample useffect")
 
         return function () {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound, effectsToggle, effectParams])
+    }, [octave, defaultSound, effectsToggle])
 
 
 
@@ -155,11 +158,12 @@ export default function Display(props) {
             selected.forEach((effectposition) => {
                 if (effectsToggle[effectposition].state === false) {
                     sampler.disconnect(effArr[effectposition])
+
+                    // add something to removeeffect nodes - nodes increase when parameter changes
                 }
             })
 
         }
-
 
     }
 
@@ -168,8 +172,9 @@ export default function Display(props) {
     React.useEffect(() => {
 
         connectEffect()
+        console.log('Running connect effect')
 
-    }, [effectsToggle, octave, effectParams])
+    }, [effectsToggle, octave])
 
 
     //load sound for wavesurfer and tone sampler
@@ -359,9 +364,11 @@ export default function Display(props) {
     function getButtons() {
 
         let sampleElements = []
+        let notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
         for (let i = 0; i < 12; i++) {
             sampleElements.push({
-                name: `${i + 1}`
+                name: `${i + 1}`,
+                note: notes[i]
             })
         }
         return sampleElements
@@ -369,7 +376,7 @@ export default function Display(props) {
 
     //map buttons to UI
     let samples = buttonState.map((item, index) => {
-        return <Buttons handleClick={() => padClick(item.name)} key={index} padName={item.name}></Buttons>
+        return <Buttons handleClick={() => padClick(item.name)} key={index} padName={item.name} padNote={item.note}></Buttons>
     })
 
 
