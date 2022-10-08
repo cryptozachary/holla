@@ -13,7 +13,6 @@ function Effects(props) {
 
     const setValue = () => {
 
-
         const newValue = Number((reverbRangeInput.current.value - reverbRangeInput.current.min) / (reverbRangeInput.current.max - reverbRangeInput.current.min));
         const newPosition = 10 - (newValue * 0.2);
         reverbRangeDiv.current.innerHTML = `<span>${reverbRangeInput.current.value}</span>`;
@@ -24,6 +23,20 @@ function Effects(props) {
         console.log(effectParams.verbDecay)
     };
 
+
+    const debounce = (func, wait) => {
+        let timeout;
+
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    };
 
 
 
@@ -39,7 +52,7 @@ function Effects(props) {
                 <p>Reverb</p>
                 <div className="reverb-tag range-wrap">
                     <div ref={reverbRangeDiv} className="range-value" id="rangeV"></div>
-                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="2" step='0.1' onChange={setValue}></input>
+                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="2" step='0.1' onChange={() => debounce(setValue(), 10000)}></input>
                 </div>
             </div >
 
