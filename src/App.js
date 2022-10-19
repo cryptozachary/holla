@@ -20,7 +20,7 @@ function App() {
 
   // effect parameters
   const [effectParams, setEffectParams] = useState({
-    verbDecay: 1,
+    verbDecay: 2,
     delayTime: 0.5,
     delayFeedback: 0.1,
     stereoWidth: 1,
@@ -51,7 +51,7 @@ function App() {
   let effArr = [reverb, delay, stereo, distortion, phaser, chorus, crusher]
 
   useEffect(() => {
-
+    // clean up effects
     return function () {
       reverb = null
       delay = null

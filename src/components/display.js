@@ -21,7 +21,6 @@ export default function Display(props) {
 
     const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams } = props
 
-
     let sampler;
 
     const wavesurfer = useRef()
