@@ -6,7 +6,7 @@ Allow users to record audio notes and/or record audio samples for music creation
 Users can save their thoughts on the go and playback at a later time or use the app as a sampler to record sounds for playback in their music projects. 
  
 2. Expected List of Features -
-Record audio samples/ playback audio samplesin regular or polyphonic mode / trim audio samples/ normalize audio samples/ download audio samples
+Record audio samples/ playback audio samples in regular or polyphonic mode / trim audio samples/ normalize audio samples/ download audio samples
 Above features will allow for increased creativity for the user 
  
 3. Market Survey -
