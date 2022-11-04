@@ -1,16 +1,22 @@
 import PacLogo from "../images/pac.png"
 import React, { useState } from "react"
 import Effects from "./effects"
+import Display from "./display"
 
 export default function Header(props) {
 
     const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams, setEffArr } = props
 
     const [modalShow, setModalShow] = useState(false)
+    const [modalShowTwo, setModalShowTwo] = useState(false)
 
     // toggles settings based on display
     const modalStyle = {
-        display: !modalShow ? "none" : "block"
+        opacity: !modalShow ? "0" : "1"
+    }
+
+    const modalStyleTwo = {
+        display: !modalShowTwo ? "none" : "block"
     }
 
     // updates the settings toggle to on or off
@@ -30,7 +36,13 @@ export default function Header(props) {
 
     //displays settings menu
     function showModal() {
-        setModalShow(!modalShow)
+
+        setModalShowTwo(!modalShowTwo)
+        //for opacity transition effect 
+        setTimeout(() => {
+            setModalShow(!modalShow)
+        }, 100)
+
     }
 
     function aboutModal() {
@@ -52,18 +64,20 @@ export default function Header(props) {
                 {/* <a href="#" className="feature-request">Feature-Request</a>
                 <a href="#" className="share">Share</a> */}
             </nav>
-            <div style={modalStyle} className="settings-container">
-                <div className="settings-modal">
-                    <Effects
-                        effArr={effArr}
-                        setEffArr={setEffArr}
-                        effectParams={effectParams}
-                        setEffectParams={setEffectParams}
-                        effectsToggle={effectsToggle}
-                        onChange={toggleSettings}
-                    />
-                </div>
+            <div className="modal-container">
+                <div style={{ ...modalStyle, ...modalStyleTwo }} className="settings-container">
+                    <div className="settings-modal">
+                        <Effects
+                            effArr={effArr}
+                            setEffArr={setEffArr}
+                            effectParams={effectParams}
+                            setEffectParams={setEffectParams}
+                            effectsToggle={effectsToggle}
+                            onChange={toggleSettings}
+                        />
+                    </div>
 
+                </div>
             </div>
 
         </div>

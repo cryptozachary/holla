@@ -20,7 +20,7 @@ function App() {
 
   // effect parameters
   const [effectParams, setEffectParams] = useState({
-    verbDecay: 2,
+    verbDecay: 1,
     delayTime: 0.5,
     delayFeedback: 0.1,
     stereoWidth: 1,
@@ -33,6 +33,7 @@ function App() {
     chorusDepth: 0.5,
     crusherBits: 9
   })
+
 
   // instances of effects created
   let reverb = new Reverb(effectParams.verbDecay)

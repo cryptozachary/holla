@@ -1,7 +1,7 @@
 import { FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
 
 export const effectParams = {
-    verbDecay: 1,
+    verbDecay: 2,
     delayTime: 0.5,
     delayFeedback: 0.1,
     stereoWidth: 1,
