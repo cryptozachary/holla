@@ -18,12 +18,13 @@ function App() {
   // state of effect toggles
   const [effectsToggle, setEffectsToggle] = React.useState(EffectsData)
 
+
   // effect parameters
   const [effectParams, setEffectParams] = useState({
     verbDecay: 1,
-    delayTime: 0.5,
+    delayTime: 0.1,
     delayFeedback: 0.1,
-    stereoWidth: 1,
+    stereoWidth: 0,
     distort: 0.5,
     phaserFreq: 15,
     phaserOctaves: 5,

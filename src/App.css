@@ -202,7 +202,7 @@ a:visited {
   padding: 5px;
   margin-top: 25px;
   opacity: 0;
-  transition: opacity 1s;
+  transition: opacity 0.5s;
   transition-timing-function: ease;
 }
 
@@ -366,6 +366,16 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 28px;
+  max-height: 28px;
+}
+
+#mono-select,
+#stereo-select {
+  padding: 2px;
+  border-radius: 5px;
+  transition: opacity 0.5s;
+  transition-timing-function: ease
 }
 
 /* Responsive  */

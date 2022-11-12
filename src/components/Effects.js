@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
+
+
 //import { effectParams } from "./effects2"
 
 function Effects(props) {
@@ -11,6 +13,9 @@ function Effects(props) {
 
     let effectSet = true;
 
+    const [stereoMono, setStereoMono] = useState(true)
+
+    // range slider for delay parameter
     const setValue = () => {
 
         const newValue = Number((reverbRangeInput.current.value - reverbRangeInput.current.min) / (reverbRangeInput.current.max - reverbRangeInput.current.min));
@@ -29,7 +34,7 @@ function Effects(props) {
 
     };
 
-
+    //debounce effect to limit the number of re-renders on selections
     const debounce = (func, wait) => {
         let timeout;
 
@@ -43,6 +48,44 @@ function Effects(props) {
             timeout = setTimeout(later, wait);
         };
     };
+
+    //delay function to handle delay via text input 
+    function handleDelay(e) {
+        setEffectParams(prev => {
+            return { ...prev, delayTime: e.target.value === "" ? 0 : e.target.value }
+        })
+
+        console.log(effectParams.delayTime)
+    }
+
+    //toggle stereoEffect State
+    function handleStereoEffect() {
+
+        // return if stereo effect turned off
+        if (!effectsToggle[2].state) return
+
+        // switch between mono and stereo selection
+        setStereoMono(prev => {
+            return !prev
+        })
+
+        setEffectParams(prev => {
+            return { ...prev, stereoWidth: prev.stereoWidth === 1 ? 0 : 1 }
+        })
+
+
+        console.log('clicked', stereoMono)
+    }
+
+    //stereoEffect Style
+    const monoStyle = {
+        backgroundColor: stereoMono ? "#4fa7f3" : ""
+    }
+    const stereoStyle = {
+        backgroundColor: !stereoMono ? "#4fa7f3" : ""
+    }
+
+
 
 
 
@@ -67,7 +110,7 @@ function Effects(props) {
                     <span className="slider round"></span>
                 </label>
                 <p className="delay-tag">Delay</p>
-                <input type='text' name='delay-text-time' id='delay-text-time' defaultValue={effectParams.delayTime}></input>
+                <input min='0' step='0.1' type='number' name='delay-text-time' id='delay-text-time' value={effectParams.delayTime} onChange={(e) => debounce(handleDelay(e), 500)}></input>
             </div>
 
             <div className='single-effect-container'>
@@ -76,8 +119,14 @@ function Effects(props) {
                     <span className="slider round"></span>
                 </label>
                 <p className="stereo-tag">Stereo Widener</p>
-            </div>
 
+                {effectsToggle[2].state ?
+                    <div onClick={handleStereoEffect} style={monoStyle} id='mono-select'>MONO</div> : <div onClick={handleStereoEffect} style={{ ...monoStyle, opacity: "0" }} id='mono-select'>MONO</div>}
+
+                {effectsToggle[2].state ?
+                    <div style={stereoStyle} onClick={handleStereoEffect} id='stereo-select'>STEREO</div>
+                    : <div style={{ ...stereoStyle, opacity: "0" }} onClick={handleStereoEffect} id='stereo-select'>STEREO</div>}
+            </div>
             <div className='single-effect-container'>
                 <label htmlFor="distortion" className="switch">
                     <input className="effect" name="distortion" id="distortion" type="checkbox" checked={effectsToggle[3].state} onChange={() => onChange(3)}></input>
