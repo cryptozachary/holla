@@ -5,7 +5,7 @@ export const effectParams = {
     delayTime: 0.5,
     delayFeedback: 0.1,
     stereoWidth: 1,
-    distort: 0.5,
+    distort: 1,
     phaserFreq: 15,
     phaserOctaves: 5,
     phaserBaseFreq: 1000,

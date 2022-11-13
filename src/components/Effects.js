@@ -1,6 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react'
-
-
 //import { effectParams } from "./effects2"
 
 function Effects(props) {
@@ -15,6 +13,27 @@ function Effects(props) {
 
     const [stereoMono, setStereoMono] = useState(true)
 
+    const [monoBool, setMonoBool] = useState(true)
+
+    const [stereoBool, setStereoBool] = useState(false)
+
+    //check if the stereoEffect is mono or stereo and set the state
+    useEffect(() => {
+        if (effectParams.stereoWidth !== 0) {
+            setMonoBool(false)
+        } else {
+
+            setMonoBool(true)
+        }
+
+        if (effectParams.stereoWidth !== 1) {
+            setStereoBool(false)
+        } else {
+            setStereoBool(true)
+
+        }
+    }, [handleStereoEffect])
+
     // range slider for delay parameter
     const setValue = () => {
 
@@ -23,7 +42,7 @@ function Effects(props) {
         reverbRangeDiv.current.innerHTML = `<span>${reverbRangeInput.current.value}</span>`;
         reverbRangeDiv.current.style.left = `calc(${newValue}% + (${newPosition}px))`;
 
-        setTimeout(callSet, 1000)
+        setTimeout(callSet, 500)
 
         function callSet() {
             setEffectParams(prev => {
@@ -68,13 +87,10 @@ function Effects(props) {
         setStereoMono(prev => {
             return !prev
         })
-
+        //turn on/off mono or stereo based upon effect value
         setEffectParams(prev => {
             return { ...prev, stereoWidth: prev.stereoWidth === 1 ? 0 : 1 }
         })
-
-
-        console.log('clicked', stereoMono)
     }
 
     //stereoEffect Style
@@ -84,9 +100,6 @@ function Effects(props) {
     const stereoStyle = {
         backgroundColor: !stereoMono ? "#4fa7f3" : ""
     }
-
-
-
 
 
     // toggle switches for each effect
@@ -100,7 +113,7 @@ function Effects(props) {
                 <p>Reverb</p>
                 <div className="reverb-tag range-wrap">
                     <div ref={reverbRangeDiv} className="range-value" id="rangeV"></div>
-                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="2" step='0.1' onChange={debounce(setValue, 500)}></input>
+                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="3" step='0.1' onChange={debounce(setValue, 500)}></input>
                 </div>
             </div >
 
@@ -121,10 +134,10 @@ function Effects(props) {
                 <p className="stereo-tag">Stereo Widener</p>
 
                 {effectsToggle[2].state ?
-                    <div onClick={handleStereoEffect} style={monoStyle} id='mono-select'>MONO</div> : <div onClick={handleStereoEffect} style={{ ...monoStyle, opacity: "0" }} id='mono-select'>MONO</div>}
+                    <div onClick={!monoBool ? handleStereoEffect : () => { }} style={monoStyle} id='mono-select'>MONO</div> : <div onClick={handleStereoEffect} style={{ ...monoStyle, opacity: "0" }} id='mono-select'>MONO</div>}
 
                 {effectsToggle[2].state ?
-                    <div style={stereoStyle} onClick={handleStereoEffect} id='stereo-select'>STEREO</div>
+                    <div style={stereoStyle} onClick={!stereoBool ? handleStereoEffect : () => { }} id='stereo-select'>STEREO</div>
                     : <div style={{ ...stereoStyle, opacity: "0" }} onClick={handleStereoEffect} id='stereo-select'>STEREO</div>}
             </div>
             <div className='single-effect-container'>

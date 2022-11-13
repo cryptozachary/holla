@@ -25,7 +25,7 @@ function App() {
     delayTime: 0.1,
     delayFeedback: 0.1,
     stereoWidth: 0,
-    distort: 0.5,
+    distort: 0,
     phaserFreq: 15,
     phaserOctaves: 5,
     phaserBaseFreq: 1000,
