@@ -370,12 +370,11 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   max-height: 28px;
 }
 
-#mono-select,
-#stereo-select {
-  padding: 2px;
+.select {
+  padding: 2.5px;
   border-radius: 5px;
   transition: opacity 0.5s;
-  transition-timing-function: ease
+  transition-timing-function: ease;
 }
 
 /* Responsive  */

@@ -17,20 +17,26 @@ function Effects(props) {
 
     const [stereoBool, setStereoBool] = useState(false)
 
-    //check if the stereoEffect is mono or stereo and set the state
+    const [effectBooleans, setEffectBooleans] = useState({
+        oneSecond: true,
+        twoSecond: false,
+        threeSecond: false,
+
+    })
+
+    //check stereowidth selection booleans
     useEffect(() => {
+
+        //check stereo boolean
         if (effectParams.stereoWidth !== 0) {
             setMonoBool(false)
         } else {
-
             setMonoBool(true)
         }
-
         if (effectParams.stereoWidth !== 1) {
             setStereoBool(false)
         } else {
             setStereoBool(true)
-
         }
     }, [handleStereoEffect])
 
@@ -93,12 +99,65 @@ function Effects(props) {
         })
     }
 
-    //stereoEffect Style
+    //toggle reverb state
+    function handleReverbDecay(event, second) {
+
+        console.log(event, second)
+
+        // return if stereo effect turned off
+        if (!effectsToggle[0].state) return
+
+        // check reverb select boolean
+        if (second === 1) {
+            setEffectBooleans(prev => {
+                return { oneSecond: true, twoSecond: false, threeSecond: false }
+            },
+                setEffectParams(prev => {
+                    return { ...prev, verbDecay: 1 }
+                })
+            )
+
+        } if (second === 2) {
+            setEffectBooleans(prev => {
+                return { oneSecond: false, twoSecond: true, threeSecond: false }
+            },
+                setEffectParams(prev => {
+                    return { ...prev, verbDecay: 2 }
+                })
+            )
+
+        } if (second === 3) {
+            setEffectBooleans(prev => {
+                return { oneSecond: false, twoSecond: false, threeSecond: true }
+            },
+                setEffectParams(prev => {
+                    return { ...prev, verbDecay: 3 }
+                })
+            )
+
+        }
+
+    }
+
+
+    //effect Style
     const monoStyle = {
         backgroundColor: stereoMono ? "#4fa7f3" : ""
     }
     const stereoStyle = {
         backgroundColor: !stereoMono ? "#4fa7f3" : ""
+    }
+
+    const reverbStyleOne = {
+        backgroundColor: effectBooleans.oneSecond ? "#4fa7f3" : ""
+    }
+
+    const reverbStyleTwo = {
+        backgroundColor: effectBooleans.twoSecond ? "#4fa7f3" : ""
+    }
+
+    const reverbStyleThree = {
+        backgroundColor: effectBooleans.threeSecond ? "#4fa7f3" : ""
     }
 
 
@@ -111,10 +170,13 @@ function Effects(props) {
                     <span className="slider round"></span>
                 </label>
                 <p>Reverb</p>
-                <div className="reverb-tag range-wrap">
-                    <div ref={reverbRangeDiv} className="range-value" id="rangeV"></div>
-                    <input type="range" ref={reverbRangeInput} defaultValue='1' name="reverb-range" id="reverb-range" className="range-slider" min="1" max="3" step='0.1' onChange={debounce(setValue, 500)}></input>
-                </div>
+
+                {effectsToggle[0].state ? <div id='reverb-select-one select' style={reverbStyleOne} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div> : <div id='reverb-select-one select' style={{ ...reverbStyleOne, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div>}
+
+                {effectsToggle[0].state ? <div id='reverb-select-two select' style={reverbStyleTwo} className='select' onClick={(e) => handleReverbDecay(e, 2)}>2s</div> : <div id='reverb-select-two select' style={{ ...reverbStyleTwo, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 2)}>2s</div>}
+
+                {effectsToggle[0].state ? <div id='reverb-select-three select' style={reverbStyleThree} className='select' onClick={(e) => handleReverbDecay(e, 3)} >3s</div> : <div id='reverb-select-three select' style={{ ...reverbStyleThree, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 3)} >3s</div>}
+
             </div >
 
             <div className='single-effect-container'>
@@ -134,11 +196,11 @@ function Effects(props) {
                 <p className="stereo-tag">Stereo Widener</p>
 
                 {effectsToggle[2].state ?
-                    <div onClick={!monoBool ? handleStereoEffect : () => { }} style={monoStyle} id='mono-select'>MONO</div> : <div onClick={handleStereoEffect} style={{ ...monoStyle, opacity: "0" }} id='mono-select'>MONO</div>}
+                    <div onClick={!monoBool ? handleStereoEffect : () => { }} style={monoStyle} id='mono-select' className='select'>MONO</div> : <div onClick={handleStereoEffect} style={{ ...monoStyle, opacity: "0" }} id='mono-select' className='select'>MONO</div>}
 
                 {effectsToggle[2].state ?
-                    <div style={stereoStyle} onClick={!stereoBool ? handleStereoEffect : () => { }} id='stereo-select'>STEREO</div>
-                    : <div style={{ ...stereoStyle, opacity: "0" }} onClick={handleStereoEffect} id='stereo-select'>STEREO</div>}
+                    <div style={stereoStyle} onClick={!stereoBool ? handleStereoEffect : () => { }} id='stereo-select' className='select'>STEREO</div>
+                    : <div style={{ ...stereoStyle, opacity: "0" }} onClick={handleStereoEffect} id='stereo-select' className='select'>STEREO</div>}
             </div>
             <div className='single-effect-container'>
                 <label htmlFor="distortion" className="switch">
