@@ -58,7 +58,6 @@ body {
   justify-content: center;
   align-content: flex-end;
   gap: 26px;
-
 }
 
 .button {
@@ -101,8 +100,15 @@ a:visited {
 }
 
 .nav-div:hover {
-  transform: scaleY(1.2);
+  transform: scaleY(1.1) scaleX(1.1);
   cursor: pointer;
+}
+
+.nav-div {
+  min-width: 70px;
+  min-height: 20px;
+  align-self: center;
+
 }
 
 .my-devices {
@@ -375,6 +381,15 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   border-radius: 5px;
   transition: opacity 0.5s;
   transition-timing-function: ease;
+}
+
+.show-none {
+  display: none;
+}
+
+.delay-select-even,
+.delay-select-odd {
+  min-width: 45px;
 }
 
 /* Responsive  */

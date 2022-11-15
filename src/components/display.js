@@ -152,7 +152,7 @@ export default function Display(props) {
             }
         })
 
-        //loop through effectsToggle and connect effect if toggle switched of (false)
+        //loop through effectsToggle and connect effect if toggle switched off (false)
         if (selected) {
             selected.forEach((effectposition) => {
                 if (effectsToggle[effectposition].state === false) {

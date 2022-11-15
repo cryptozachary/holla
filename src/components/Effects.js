@@ -17,10 +17,22 @@ function Effects(props) {
 
     const [stereoBool, setStereoBool] = useState(false)
 
+    const [delayChoice, setDelayChoice] = useState(false)
+
     const [effectBooleans, setEffectBooleans] = useState({
         oneSecond: true,
         twoSecond: false,
         threeSecond: false,
+        pointOne: true,
+        pointTwo: false,
+        pointThree: false,
+        pointFour: false,
+        pointFive: false,
+        pointSix: false,
+        pointSeven: false,
+        pointEight: false,
+        pointNine: false,
+        onePointZero: false,
 
     })
 
@@ -38,6 +50,7 @@ function Effects(props) {
         } else {
             setStereoBool(true)
         }
+
     }, [handleStereoEffect])
 
     // range slider for delay parameter
@@ -74,13 +87,25 @@ function Effects(props) {
         };
     };
 
+    //function to toggle delay even or odd
+    function handleDelayChoice() {
+        setDelayChoice(!delayChoice)
+    }
+
     //delay function to handle delay via text input 
-    function handleDelay(e) {
+    function handleDelay(e, second) {
+
+        if (!effectsToggle[1].state) return
+
         setEffectParams(prev => {
-            return { ...prev, delayTime: e.target.value === "" ? 0 : e.target.value }
+            return { ...prev, delayTime: second }
         })
 
-        console.log(effectParams.delayTime)
+        setEffectBooleans(prev => {
+            return { ...prev, [e.target.id]: !prev[e.target.id] }
+        })
+
+        console.log(effectParams.delayTime, second, e)
     }
 
     //toggle stereoEffect State
@@ -110,7 +135,7 @@ function Effects(props) {
         // check reverb select boolean
         if (second === 1) {
             setEffectBooleans(prev => {
-                return { oneSecond: true, twoSecond: false, threeSecond: false }
+                return { ...prev, oneSecond: true, twoSecond: false, threeSecond: false }
             },
                 setEffectParams(prev => {
                     return { ...prev, verbDecay: 1 }
@@ -119,7 +144,7 @@ function Effects(props) {
 
         } if (second === 2) {
             setEffectBooleans(prev => {
-                return { oneSecond: false, twoSecond: true, threeSecond: false }
+                return { ...prev, oneSecond: false, twoSecond: true, threeSecond: false }
             },
                 setEffectParams(prev => {
                     return { ...prev, verbDecay: 2 }
@@ -128,7 +153,7 @@ function Effects(props) {
 
         } if (second === 3) {
             setEffectBooleans(prev => {
-                return { oneSecond: false, twoSecond: false, threeSecond: true }
+                return { ...prev, oneSecond: false, twoSecond: false, threeSecond: true }
             },
                 setEffectParams(prev => {
                     return { ...prev, verbDecay: 3 }
@@ -147,29 +172,59 @@ function Effects(props) {
     const stereoStyle = {
         backgroundColor: !stereoMono ? "#4fa7f3" : ""
     }
-
     const reverbStyleOne = {
         backgroundColor: effectBooleans.oneSecond ? "#4fa7f3" : ""
     }
-
     const reverbStyleTwo = {
         backgroundColor: effectBooleans.twoSecond ? "#4fa7f3" : ""
     }
-
     const reverbStyleThree = {
         backgroundColor: effectBooleans.threeSecond ? "#4fa7f3" : ""
     }
+
+    const delayStyle = [{
+        backgroundColor: effectBooleans.pointOne ? "#4fa7f3" : ""
+    },
+
+    {
+        backgroundColor: effectBooleans.pointTwo ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointThree ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointFour ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointFive ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointSix ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointSeven ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointEight ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.pointNine ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: effectBooleans.onePointZero ? "#4fa7f3" : ""
+    },
+    ]
 
 
     // toggle switches for each effect
     return (
         <div className='effect-container'>
+            <p>Reverb</p>
             <div className='single-effect-container'>
                 <label htmlFor="reverb" className="switch">
                     <input className="effect" name="reverb" id="reverb" type="checkbox" checked={effectsToggle[0].state} onChange={() => onChange(0)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p>Reverb</p>
 
                 {effectsToggle[0].state ? <div id='reverb-select-one select' style={reverbStyleOne} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div> : <div id='reverb-select-one select' style={{ ...reverbStyleOne, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div>}
 
@@ -179,21 +234,34 @@ function Effects(props) {
 
             </div >
 
+            <p className="delay-tag" onClick={handleDelayChoice}>Delay</p>
             <div className='single-effect-container'>
                 <label htmlFor="delay" className="switch">
                     <input className="effect" name="delay" id="delay" type="checkbox" checked={effectsToggle[1].state} onChange={() => onChange(1)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="delay-tag">Delay</p>
-                <input min='0' step='0.1' type='number' name='delay-text-time' id='delay-text-time' value={effectParams.delayTime} onChange={(e) => debounce(handleDelay(e), 500)}></input>
+
+                {effectsToggle[1].state ?
+                    <>
+                        <div id='pointOne' style={delayStyle[0]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.1)}>0.1ms</div>
+                        <div id='pointTwo' style={delayStyle[1]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.2)}>0.2ms</div>
+                        <div id='pointThree' style={delayStyle[2]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.3)}>0.3ms</div>
+                        <div id='pointFour' style={delayStyle[3]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.4)}>0.4ms</div>
+                        <div id='pointFive' style={delayStyle[4]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.5)}>0.5ms</div>
+                        <div id='pointSix' style={delayStyle[5]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.6)}>0.6ms</div>
+                        <div id='pointSeven' style={delayStyle[6]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.7)}>0.7ms</div>
+                        <div id='pointEight' style={delayStyle[7]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.8)}>0.8ms</div>
+                        <div id='pointNine' style={delayStyle[8]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.9)}>0.9ms</div>
+                        <div id='onePoint' style={delayStyle[9]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 1.0)}>1.0ms</div>
+                    </> : null}
             </div>
 
+            <p className="stereo-tag">Mono/Wide</p>
             <div className='single-effect-container'>
                 <label htmlFor="stereo" className="switch">
                     <input className="effect" name="stereo" id="stereo" type="checkbox" checked={effectsToggle[2].state} onChange={() => onChange(2)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="stereo-tag">Stereo Widener</p>
 
                 {effectsToggle[2].state ?
                     <div onClick={!monoBool ? handleStereoEffect : () => { }} style={monoStyle} id='mono-select' className='select'>MONO</div> : <div onClick={handleStereoEffect} style={{ ...monoStyle, opacity: "0" }} id='mono-select' className='select'>MONO</div>}
@@ -202,36 +270,41 @@ function Effects(props) {
                     <div style={stereoStyle} onClick={!stereoBool ? handleStereoEffect : () => { }} id='stereo-select' className='select'>STEREO</div>
                     : <div style={{ ...stereoStyle, opacity: "0" }} onClick={handleStereoEffect} id='stereo-select' className='select'>STEREO</div>}
             </div>
+
+            <p className="distortion-tag">Distortion</p>
             <div className='single-effect-container'>
                 <label htmlFor="distortion" className="switch">
                     <input className="effect" name="distortion" id="distortion" type="checkbox" checked={effectsToggle[3].state} onChange={() => onChange(3)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="distortion-tag">Distortion</p>
+
             </div>
 
+            <p className="phaser-tag">Phaser</p>
             <div className='single-effect-container'>
                 <label htmlFor="phaser" className="switch">
                     <input className="effect" name="phaser" id="phaser" type="checkbox" checked={effectsToggle[4].state} onChange={() => onChange(4)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="phaser-tag">Phaser</p>
+
             </div>
 
+            <p className="chorus-tag">Chorus</p>
             <div className='single-effect-container'>
                 <label htmlFor="chorus" className="switch">
                     <input className="effect" id="chorus" name="chorus" type="checkbox" checked={effectsToggle[5].state} onChange={() => onChange(5)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="chorus-tag">Chorus</p>
+
             </div>
 
+            <p className="bitcrusher-tag">Bit Crusher</p>
             <div className='single-effect-container'>
                 <label htmlFor="bitcrusher" className="switch">
                     <input className="effect" name="bitcrusher" id="bitcrusher" type="checkbox" checked={effectsToggle[6].state} onChange={() => onChange(6)}></input>
                     <span className="slider round"></span>
                 </label>
-                <p className="bitcrusher-tag">Bit Crusher</p>
+
             </div>
 
         </div >
