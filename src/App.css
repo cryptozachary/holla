@@ -363,17 +363,21 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 
 .effect-container {
   display: grid;
-  grid-template-columns: 1fr;
   height: 650px;
   align-items: center;
 }
 
 .single-effect-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   justify-content: space-between;
   align-items: center;
   min-height: 28px;
   max-height: 28px;
+  justify-items: start;
+  align-content: space-between;
+  column-gap: 2.5px;
+  text-align: center;
 }
 
 .select {

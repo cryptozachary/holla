@@ -17,12 +17,15 @@ function Effects(props) {
 
     const [stereoBool, setStereoBool] = useState(false)
 
-    const [delayChoice, setDelayChoice] = useState(false)
+    const [delayChoice, setDelayChoice] = useState(true)
 
     const [effectBooleans, setEffectBooleans] = useState({
         oneSecond: true,
         twoSecond: false,
         threeSecond: false,
+    })
+
+    const [delayBooleans, setDelayBooleans] = useState({
         pointOne: true,
         pointTwo: false,
         pointThree: false,
@@ -33,7 +36,12 @@ function Effects(props) {
         pointEight: false,
         pointNine: false,
         onePointZero: false,
+    })
 
+    const [distortionBooleans, setDistortionBooleans] = useState({
+        zero: true,
+        zeroPointFive: false,
+        onePointZero: false,
     })
 
     //check stereowidth selection booleans
@@ -87,12 +95,12 @@ function Effects(props) {
         };
     };
 
-    //function to toggle delay even or odd
+    //function to toggle delay even or odd delay visual
     function handleDelayChoice() {
         setDelayChoice(!delayChoice)
     }
 
-    //delay function to handle delay via text input 
+    //handle delay effect selections
     function handleDelay(e, second) {
 
         if (!effectsToggle[1].state) return
@@ -101,14 +109,74 @@ function Effects(props) {
             return { ...prev, delayTime: second }
         })
 
-        setEffectBooleans(prev => {
-            return { ...prev, [e.target.id]: !prev[e.target.id] }
+        // set delay boolean choice based upon delay setting
+        setDelayBooleans(prev => {
+            if (second === 0.1) {
+                return ({
+                    pointOne: true, pointTwo: false, pointThree: false, pointFour: false, pointFive: false, pointSix: false, pointSeven: false, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.2) {
+                return ({
+                    pointOne: false, pointTwo: true, pointThree: false, pointFour: false, pointFive: false, pointSix: false, pointSeven: false, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.3) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: true, pointFour: false, pointFive: false, pointSix: false, pointSeven: false, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.4) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: true, pointFive: false, pointSix: false, pointSeven: false, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.5) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: false, pointFive: true, pointSix: false, pointSeven: false, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.6) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: false, pointFive: false, pointSix: true, pointSeven: false, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.7) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: false, pointFive: false, pointSix: false, pointSeven: true, pointEight: false, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.8) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: false, pointFive: false, pointSix: false, pointSeven: false, pointEight: true, pointNine: false, onePointZero: false
+                })
+            }
+
+            if (second === 0.9) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: false, pointFive: false, pointSix: false, pointSeven: false, pointEight: false, pointNine: true, onePointZero: false
+                })
+            }
+
+            if (second === 1.0) {
+                return ({
+                    pointOne: false, pointTwo: false, pointThree: false, pointFour: false, pointFive: false, pointSix: false, pointSeven: false, pointEight: false, pointNine: false, onePointZero: true
+                })
+            }
+
         })
 
         console.log(effectParams.delayTime, second, e)
     }
 
-    //toggle stereoEffect State
+    //handle stereo effect selections
     function handleStereoEffect() {
 
         // return if stereo effect turned off
@@ -124,7 +192,7 @@ function Effects(props) {
         })
     }
 
-    //toggle reverb state
+    //handle reverb selections
     function handleReverbDecay(event, second) {
 
         console.log(event, second)
@@ -132,36 +200,54 @@ function Effects(props) {
         // return if stereo effect turned off
         if (!effectsToggle[0].state) return
 
+
+        setEffectParams(prev => {
+            return { ...prev, verbDecay: second }
+        })
+
         // check reverb select boolean
         if (second === 1) {
             setEffectBooleans(prev => {
                 return { ...prev, oneSecond: true, twoSecond: false, threeSecond: false }
-            },
-                setEffectParams(prev => {
-                    return { ...prev, verbDecay: 1 }
-                })
-            )
+            })
 
         } if (second === 2) {
             setEffectBooleans(prev => {
                 return { ...prev, oneSecond: false, twoSecond: true, threeSecond: false }
-            },
-                setEffectParams(prev => {
-                    return { ...prev, verbDecay: 2 }
-                })
-            )
+            })
 
         } if (second === 3) {
             setEffectBooleans(prev => {
                 return { ...prev, oneSecond: false, twoSecond: false, threeSecond: true }
-            },
-                setEffectParams(prev => {
-                    return { ...prev, verbDecay: 3 }
-                })
-            )
-
+            })
         }
+    }
 
+    //handle distortion selection
+    function handleDistortion(e, distortAmount) {
+
+        if (!effectsToggle[3].state) return
+
+        setEffectParams(prev => {
+            return { ...prev, distort: distortAmount }
+        })
+
+        if (distortAmount === 0) {
+            setDistortionBooleans(prev => {
+                return { ...prev, zero: true, zeroPointFive: false, onePointZero: false }
+            })
+        }
+        if (distortAmount === 0.5) {
+            setDistortionBooleans(prev => {
+                return { ...prev, zero: false, zeroPointFive: true, onePointZero: false }
+            })
+        }
+        if (distortAmount === 1) {
+            setDistortionBooleans(prev => {
+                return { ...prev, zero: false, zeroPointFive: false, onePointZero: true }
+            })
+        }
+        console.log(effectParams.distort, distortAmount, e)
     }
 
 
@@ -183,36 +269,49 @@ function Effects(props) {
     }
 
     const delayStyle = [{
-        backgroundColor: effectBooleans.pointOne ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointOne ? "#4fa7f3" : ""
     },
 
     {
-        backgroundColor: effectBooleans.pointTwo ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointTwo ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointThree ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointThree ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointFour ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointFour ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointFive ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointFive ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointSix ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointSix ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointSeven ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointSeven ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointEight ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointEight ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.pointNine ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.pointNine ? "#4fa7f3" : ""
     },
     {
-        backgroundColor: effectBooleans.onePointZero ? "#4fa7f3" : ""
+        backgroundColor: delayBooleans.onePointZero ? "#4fa7f3" : ""
     },
+    ]
+
+    const distortionStyle = [{
+
+        backgroundColor: distortionBooleans.zero ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: distortionBooleans.zeroPointFive ? "#4fa7f3" : ""
+    },
+
+    {
+        backgroundColor: distortionBooleans.onePointZero ? "#4fa7f3" : ""
+    }
     ]
 
 
@@ -226,11 +325,11 @@ function Effects(props) {
                     <span className="slider round"></span>
                 </label>
 
-                {effectsToggle[0].state ? <div id='reverb-select-one select' style={reverbStyleOne} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div> : <div id='reverb-select-one select' style={{ ...reverbStyleOne, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div>}
+                {effectsToggle[0].state ? <div id='reverb-select-one' style={reverbStyleOne} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div> : <div id='reverb-select-one' style={{ ...reverbStyleOne, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 1)}>1s</div>}
 
-                {effectsToggle[0].state ? <div id='reverb-select-two select' style={reverbStyleTwo} className='select' onClick={(e) => handleReverbDecay(e, 2)}>2s</div> : <div id='reverb-select-two select' style={{ ...reverbStyleTwo, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 2)}>2s</div>}
+                {effectsToggle[0].state ? <div id='reverb-select-two' style={reverbStyleTwo} className='select' onClick={(e) => handleReverbDecay(e, 2)}>2s</div> : <div id='reverb-select-two' style={{ ...reverbStyleTwo, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 2)}>2s</div>}
 
-                {effectsToggle[0].state ? <div id='reverb-select-three select' style={reverbStyleThree} className='select' onClick={(e) => handleReverbDecay(e, 3)} >3s</div> : <div id='reverb-select-three select' style={{ ...reverbStyleThree, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 3)} >3s</div>}
+                {effectsToggle[0].state ? <div id='reverb-select-three' style={reverbStyleThree} className='select' onClick={(e) => handleReverbDecay(e, 3)} >3s</div> : <div id='reverb-select-three ' style={{ ...reverbStyleThree, opacity: 0 }} className='select' onClick={(e) => handleReverbDecay(e, 3)} >3s</div>}
 
             </div >
 
@@ -243,17 +342,28 @@ function Effects(props) {
 
                 {effectsToggle[1].state ?
                     <>
-                        <div id='pointOne' style={delayStyle[0]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.1)}>0.1ms</div>
-                        <div id='pointTwo' style={delayStyle[1]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.2)}>0.2ms</div>
-                        <div id='pointThree' style={delayStyle[2]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.3)}>0.3ms</div>
-                        <div id='pointFour' style={delayStyle[3]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.4)}>0.4ms</div>
-                        <div id='pointFive' style={delayStyle[4]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.5)}>0.5ms</div>
-                        <div id='pointSix' style={delayStyle[5]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.6)}>0.6ms</div>
-                        <div id='pointSeven' style={delayStyle[6]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.7)}>0.7ms</div>
-                        <div id='pointEight' style={delayStyle[7]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.8)}>0.8ms</div>
-                        <div id='pointNine' style={delayStyle[8]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.9)}>0.9ms</div>
-                        <div id='onePoint' style={delayStyle[9]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 1.0)}>1.0ms</div>
-                    </> : null}
+                        <div id='pointOne' style={delayStyle[0]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.1)}>.1ms</div>
+                        <div id='pointTwo' style={delayStyle[1]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.2)}>.2ms</div>
+                        <div id='pointThree' style={delayStyle[2]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.3)}>.3ms</div>
+                        <div id='pointFour' style={delayStyle[3]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.4)}>.4ms</div>
+                        <div id='pointFive' style={delayStyle[4]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.5)}>.5ms</div>
+                        <div id='pointSix' style={delayStyle[5]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.6)}>.6ms</div>
+                        <div id='pointSeven' style={delayStyle[6]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.7)}>.7ms</div>
+                        <div id='pointEight' style={delayStyle[7]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.8)}>.8ms</div>
+                        <div id='pointNine' style={delayStyle[8]} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.9)}>.9ms</div>
+                        <div id='onePointZero' style={delayStyle[9]} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 1.0)}>1ms</div>
+                    </> : <>
+                        <div id='pointOne' style={{ ...delayStyle[0], opacity: "0" }} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.1)}>.1ms</div>
+                        <div id='pointTwo' style={{ ...delayStyle[1], opacity: "0" }} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.2)}>.2ms</div>
+                        <div id='pointThree' style={{ ...delayStyle[2], opacity: "0" }} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.3)}>.3ms</div>
+                        <div id='pointFour' style={{ ...delayStyle[3], opacity: "0" }} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.4)}>.4ms</div>
+                        <div id='pointFive' style={{ ...delayStyle[4], opacity: "0" }} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.5)}>.5ms</div>
+                        <div id='pointSix' style={{ ...delayStyle[5], opacity: "0" }} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.6)}>.6ms</div>
+                        <div id='pointSeven' style={{ ...delayStyle[6], opacity: "0" }} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.7)}>.7ms</div>
+                        <div id='pointEight' style={{ ...delayStyle[7], opacity: "0" }} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.8)}>.8ms</div>
+                        <div id='pointNine' style={{ ...delayStyle[8], opacity: "0" }} className={`select delay-select-odd ${!delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 0.9)}>.9ms</div>
+                        <div id='onePointZero' style={{ ...delayStyle[9], opacity: "0" }} className={`select delay-select-even ${delayChoice ? 'show-none' : ''}`} onClick={(e) => handleDelay(e, 1.0)}>1ms</div>
+                    </>}
             </div>
 
             <p className="stereo-tag">Mono/Wide</p>
@@ -277,6 +387,18 @@ function Effects(props) {
                     <input className="effect" name="distortion" id="distortion" type="checkbox" checked={effectsToggle[3].state} onChange={() => onChange(3)}></input>
                     <span className="slider round"></span>
                 </label>
+
+                {effectsToggle[3].state ?
+                    <>
+                        <div id='zero' style={distortionStyle[0]} className='select' onClick={(e) => handleDistortion(e, 0)}>0</div>
+                        <div id='zeroPointFive' style={distortionStyle[1]} className='select' onClick={(e) => handleDistortion(e, 0.5)}>0.5</div>
+                        <div id='onePointZero' style={distortionStyle[2]} className='select' onClick={(e) => handleDistortion(e, 1)}>1.0</div>
+                    </> : <>
+                        <div id='zero' style={{ ...distortionStyle[0], opacity: '0' }} className='select' onClick={(e) => handleDistortion(e, 0)}>0</div>
+                        <div id='zeroPointFive' style={{ ...distortionStyle[1], opacity: '0' }} className='select' onClick={(e) => handleDistortion(e, 0.5)}>0.5</div>
+                        <div id='onePointZero' style={{ ...distortionStyle[2], opacity: '0' }} className='select' onClick={(e) => handleDistortion(e, 1)}>1.0</div>
+                    </>}
+
 
             </div>
 
