@@ -18,12 +18,15 @@ function App() {
   // state of effect toggles
   const [effectsToggle, setEffectsToggle] = React.useState(EffectsData)
 
+  // check if menu is showing
+  const [menuShowing, setMenuShowing] = useState(false)
+
 
   // effect parameters
   const [effectParams, setEffectParams] = useState({
     verbDecay: 1,
     delayTime: 0.1,
-    delayFeedback: 0.1,
+    delayFeedback: 0.2,
     stereoWidth: 0,
     distort: 0,
     phaserFreq: 15,
@@ -32,7 +35,7 @@ function App() {
     chorusFreq: 4,
     chorusDelayTime: 2.5,
     chorusDepth: 0.5,
-    crusherBits: 9
+    crusherBits: 1
   })
 
 
@@ -66,7 +69,6 @@ function App() {
     }
   })
 
-
   return (
     <div className="main-app-body">
 
@@ -76,6 +78,8 @@ function App() {
         setEffectParams={setEffectParams}
         effectsToggle={effectsToggle}
         setEffectsToggle={setEffectsToggle}
+        menuShowing={menuShowing}
+        setMenuShowing={setMenuShowing}
       />
 
       <div className="app">
@@ -85,6 +89,7 @@ function App() {
           setEffectParams={setEffectParams}
           effectsToggle={effectsToggle}
           setEffectsToggle={setEffectsToggle}
+          menuShowing={menuShowing}
         />
 
       </div>

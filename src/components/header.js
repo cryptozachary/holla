@@ -1,11 +1,11 @@
 import PacLogo from "../images/pac.png"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Effects from "./effects"
 import Display from "./display"
 
 export default function Header(props) {
 
-    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams, setEffArr } = props
+    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams, setEffArr, menuShowing, setMenuShowing } = props
 
     const [modalShow, setModalShow] = useState(false)
     const [modalShowTwo, setModalShowTwo] = useState(false)
@@ -43,10 +43,21 @@ export default function Header(props) {
             setModalShow(!modalShow)
         }, 100)
 
+        checkModal()
+
     }
 
     function aboutModal() {
         console.log("about menu clicked")
+    }
+
+    const checkModal = () => {
+
+        if (modalStyleTwo.display === 'block') {
+            setMenuShowing(!menuShowing)
+        } else {
+            setMenuShowing(!menuShowing)
+        }
     }
 
 
@@ -59,7 +70,7 @@ export default function Header(props) {
                 <img className="pac-logo" src={PacLogo} alt="pac"></img>
                 <div className="home-nav nav-div" onClick={showModal}>Settings
                 </div>
-                <div className="about nav-div" onClick={aboutModal}>About</div>
+                {/* <div className="about nav-div" onClick={aboutModal}>About</div> */}
 
                 {/* <a href="#" className="feature-request">Feature-Request</a>
                 <a href="#" className="share">Share</a> */}

@@ -19,7 +19,7 @@ export default function Display(props) {
 
     console.log("display render")
 
-    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams } = props
+    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams, menuShowing } = props
 
     let sampler;
 
@@ -30,8 +30,6 @@ export default function Display(props) {
     const [buttonState, setButtonState] = React.useState(getButtons())
 
     const [micState, setMicState] = React.useState(false)
-
-
 
     const [defaultSound, setDefaultSound] = React.useState(Kick)
 
@@ -134,7 +132,7 @@ export default function Display(props) {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound, effectsToggle, effectParams])
+    }, [octave, defaultSound, effectsToggle, effectParams, menuShowing])
 
 
 
@@ -298,7 +296,7 @@ export default function Display(props) {
             case "1": Tone.loaded().then(() => {
                 sampler.releaseAll(Tone.context.currentTime);
                 sampler.triggerAttack([`C${octave}`], Tone.context.currentTime);
-            }).catch(() => console.log('Tone not loaded'))
+            }).catch((err) => console.log(`Tone not loaded${err}`))
                 break;
             case "2": Tone.loaded().then(() => {
                 sampler.releaseAll(Tone.context.currentTime);
@@ -358,6 +356,14 @@ export default function Display(props) {
         }
     }
 
+    //preview pad on settings menu
+
+    function previewPad() {
+        Tone.loaded().then(() => {
+            sampler.releaseAll(Tone.context.currentTime);
+            sampler.triggerAttackRelease([`D#${octave}`], 4, Tone.context.currentTime);
+        }).catch((err) => console.log(`Tone not loaded${err}`))
+    }
 
     // buttons created for mapping 
     function getButtons() {
@@ -388,6 +394,9 @@ export default function Display(props) {
             <div className="transport">
                 {samples}
             </div>
+            <>
+                {menuShowing ? <button style={{ opacity: '1' }} type='button' name='preview-select' className='preview-btn button showBtn' onClick={previewPad}>Preview</button> : <button style={{ opacity: '0' }} type='button' name='preview-select' className='preview-btn button showBtn' onClick={previewPad}>Preview</button>}
+            </>
         </div>
     )
 }

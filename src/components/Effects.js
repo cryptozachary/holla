@@ -9,8 +9,6 @@ function Effects(props) {
 
     const reverbRangeDiv = useRef()
 
-    let effectSet = true;
-
     const [stereoMono, setStereoMono] = useState(true)
 
     const [monoBool, setMonoBool] = useState(true)
@@ -19,10 +17,23 @@ function Effects(props) {
 
     const [delayChoice, setDelayChoice] = useState(true)
 
+    const [crusherChoice, setCrusherChoice] = useState(true)
+
     const [effectBooleans, setEffectBooleans] = useState({
         oneSecond: true,
         twoSecond: false,
         threeSecond: false,
+    })
+
+    const [crusherBooleans, setCrusherBooleans] = useState({
+        one: true,
+        two: false,
+        three: false,
+        four: false,
+        five: false,
+        six: false,
+        seven: false,
+        eight: false,
     })
 
     const [delayBooleans, setDelayBooleans] = useState({
@@ -42,6 +53,18 @@ function Effects(props) {
         zero: true,
         zeroPointFive: false,
         onePointZero: false,
+    })
+
+    const [phaserBooleans, setPhaserBooleans] = useState({
+        low: true,
+        medium: false,
+        high: false,
+    })
+
+    const [chorusBooleans, SetChorusBooleans] = useState({
+        low: true,
+        medium: false,
+        high: false,
     })
 
     //check stereowidth selection booleans
@@ -176,6 +199,66 @@ function Effects(props) {
         console.log(effectParams.delayTime, second, e)
     }
 
+    //handle crusher choice
+    function handleCrusherChoice() {
+        setCrusherChoice(!crusherChoice)
+    }
+
+    //handle crusher effect selections
+    function handleCrusher(e, selection) {
+
+        if (!effectsToggle[6].state) return
+
+        setEffectParams(prev => {
+            return { ...prev, crusherBits: selection }
+        })
+
+        setCrusherBooleans(prev => {
+
+            if (selection === 1) {
+                return ({
+                    one: true, two: false, three: false, four: false, five: false, six: false, seven: false, eight: false
+                })
+            }
+            if (selection === 2) {
+                return ({
+                    one: false, two: true, three: false, four: false, five: false, six: false, seven: false, eight: false
+                })
+            }
+            if (selection === 3) {
+                return ({
+                    one: false, two: false, three: true, four: false, five: false, six: false, seven: false, eight: false
+                })
+            }
+            if (selection === 4) {
+                return ({
+                    one: false, two: false, three: false, four: true, five: false, six: false, seven: false, eight: false
+                })
+            }
+            if (selection === 5) {
+                return ({
+                    one: false, two: false, three: false, four: false, five: true, six: false, seven: false, eight: false
+                })
+            }
+            if (selection === 6) {
+                return ({
+                    one: false, two: false, three: false, four: false, five: false, six: true, seven: false, eight: false
+                })
+            }
+            if (selection === 7) {
+                return ({
+                    one: false, two: false, three: false, four: false, five: false, six: false, seven: true, eight: false
+                })
+            }
+            if (selection === 8) {
+                return ({
+                    one: false, two: false, three: false, four: false, five: false, six: false, seven: false, eight: true
+                })
+            }
+        })
+
+    }
+
     //handle stereo effect selections
     function handleStereoEffect() {
 
@@ -250,6 +333,79 @@ function Effects(props) {
         console.log(effectParams.distort, distortAmount, e)
     }
 
+    //handle phaser selection
+    function handlePhaser(e, phaseAmount) {
+
+        if (!effectsToggle[4].state) return
+
+
+        setEffectParams(prev => {
+
+            if (phaseAmount === "Low") {
+                return { ...prev, phaserFreq: 15, phaserOctaves: 5, phaserBaseFreq: 1000, }
+            }
+
+            if (phaseAmount === "Medium") {
+                return { ...prev, phaserFreq: 30, phaserOctaves: 10, phaserBaseFreq: 2000, }
+            }
+
+            if (phaseAmount === "High") {
+                return { ...prev, phaserFreq: 45, phaserOctaves: 15, phaserBaseFreq: 3000, }
+            }
+        })
+
+        setPhaserBooleans(prev => {
+
+            if (phaseAmount === "Low") {
+                return { ...prev, low: true, medium: false, high: false, }
+            }
+
+            if (phaseAmount === "Medium") {
+                return { ...prev, low: false, medium: true, high: false, }
+            }
+
+            if (phaseAmount === "High") {
+                return { ...prev, low: false, medium: false, high: true, }
+            }
+        })
+    }
+
+    //handle chorus selection
+    function handleChorus(e, chorusAmount) {
+
+        if (!effectsToggle[5].state) return
+
+
+        setEffectParams(prev => {
+
+            if (chorusAmount === "Low") {
+                return { ...prev, chorusFreq: 15, chrousDelayTime: 5, chorusDepth: 1000, }
+            }
+
+            if (chorusAmount === "Medium") {
+                return { ...prev, chorusFreq: 30, chrousDelayTime: 10, chorusDepth: 2000, }
+            }
+
+            if (chorusAmount === "High") {
+                return { ...prev, chorusFreq: 45, chrousDelayTime: 15, chorusDepth: 3000, }
+            }
+        })
+
+        SetChorusBooleans(prev => {
+
+            if (chorusAmount === "Low") {
+                return { ...prev, low: true, medium: false, high: false }
+            }
+
+            if (chorusAmount === "Medium") {
+                return { ...prev, low: false, medium: true, high: false }
+            }
+
+            if (chorusAmount === "High") {
+                return { ...prev, low: false, medium: false, high: true }
+            }
+        })
+    }
 
     //effect Style
     const monoStyle = {
@@ -301,6 +457,33 @@ function Effects(props) {
     },
     ]
 
+
+    const crusherStyle = [{
+        backgroundColor: crusherBooleans.one ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.two ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.three ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.four ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.five ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.six ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.seven ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: crusherBooleans.eight ? "#4fa7f3" : ""
+    },
+    ]
+
     const distortionStyle = [{
 
         backgroundColor: distortionBooleans.zero ? "#4fa7f3" : ""
@@ -311,6 +494,32 @@ function Effects(props) {
 
     {
         backgroundColor: distortionBooleans.onePointZero ? "#4fa7f3" : ""
+    }
+    ]
+
+    const phaserStyle = [{
+
+        backgroundColor: phaserBooleans.low ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: phaserBooleans.medium ? "#4fa7f3" : ""
+    },
+
+    {
+        backgroundColor: phaserBooleans.high ? "#4fa7f3" : ""
+    }
+    ]
+
+    const chorusStyle = [{
+
+        backgroundColor: chorusBooleans.low ? "#4fa7f3" : ""
+    },
+    {
+        backgroundColor: chorusBooleans.medium ? "#4fa7f3" : ""
+    },
+
+    {
+        backgroundColor: chorusBooleans.high ? "#4fa7f3" : ""
     }
     ]
 
@@ -399,7 +608,6 @@ function Effects(props) {
                         <div id='onePointZero' style={{ ...distortionStyle[2], opacity: '0' }} className='select' onClick={(e) => handleDistortion(e, 1)}>1.0</div>
                     </>}
 
-
             </div>
 
             <p className="phaser-tag">Phaser</p>
@@ -408,6 +616,18 @@ function Effects(props) {
                     <input className="effect" name="phaser" id="phaser" type="checkbox" checked={effectsToggle[4].state} onChange={() => onChange(4)}></input>
                     <span className="slider round"></span>
                 </label>
+
+
+                {effectsToggle[4].state ?
+                    <>
+                        <div name='frequency-select' style={phaserStyle[0]} id='frequency-select' className='select' onClick={(e) => handlePhaser(e, 'Low')}>Low</div>
+                        <div name='frequency-select' style={phaserStyle[1]} id='frequency-select' className='select' onClick={(e) => handlePhaser(e, 'Medium')}>Medium</div>
+                        <div name='frequency-select' style={phaserStyle[2]} id='frequency-select' className='select' onClick={(e) => handlePhaser(e, 'High')}>High</div>
+                    </> : <>
+                        <div name='frequency-select' style={{ ...phaserStyle[0], opacity: 0 }} id='frequency-select' className='select' onClick={(e) => handlePhaser(e, 'Low')}>Low</div>
+                        <div name='frequency-select' style={{ ...phaserStyle[1], opacity: 0 }} id='frequency-select' className='select' onClick={(e) => handlePhaser(e, 'Medium')}>Medium</div>
+                        <div name='frequency-select' style={{ ...phaserStyle[2], opacity: 0 }} id='frequency-select' className='select' onClick={(e) => handlePhaser(e, 'High')}>High</div>
+                    </>}
 
             </div>
 
@@ -418,15 +638,47 @@ function Effects(props) {
                     <span className="slider round"></span>
                 </label>
 
+                {effectsToggle[5].state ?
+                    <>
+                        <div name='chorus-select' style={chorusStyle[0]} id='chorus-select' className='select' onClick={(e) => handleChorus(e, 'Low')}>Low</div>
+                        <div name='chorus-select' style={chorusStyle[1]} id='chorus-select' className='select' onClick={(e) => handleChorus(e, 'Medium')}>Medium</div>
+                        <div name='chorus-select' style={chorusStyle[2]} id='chorus-select' className='select' onClick={(e) => handleChorus(e, 'High')}>High</div>
+                    </> : <>
+                        <div name='chorus-select' style={{ ...chorusStyle[0], opacity: 0 }} id='chorus-select' className='select' onClick={(e) => handleChorus(e, 'Low')}>Low</div>
+                        <div name='chorus-select' style={{ ...chorusStyle[1], opacity: 0 }} id='chorus-select' className='select' onClick={(e) => handleChorus(e, 'Medium')}>Medium</div>
+                        <div name='chorus-select' style={{ ...chorusStyle[2], opacity: 0 }} id='chorus-select' className='select' onClick={(e) => handleChorus(e, 'High')}>High</div>
+                    </>}
+
+
             </div>
 
-            <p className="bitcrusher-tag">Bit Crusher</p>
+            <p className="bitcrusher-tag" onClick={handleCrusherChoice}>Bit Crusher</p>
             <div className='single-effect-container'>
                 <label htmlFor="bitcrusher" className="switch">
                     <input className="effect" name="bitcrusher" id="bitcrusher" type="checkbox" checked={effectsToggle[6].state} onChange={() => onChange(6)}></input>
                     <span className="slider round"></span>
                 </label>
 
+                {effectsToggle[6].state ?
+                    <>
+                        <div id='one' style={crusherStyle[0]} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 1)}>1</div>
+                        <div id='two' style={crusherStyle[1]} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 2)}>2</div>
+                        <div id='three' style={crusherStyle[2]} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 3)}>3</div>
+                        <div id='four' style={crusherStyle[3]} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 4)}>4</div>
+                        <div id='five' style={crusherStyle[4]} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 5)}>5</div>
+                        <div id='six' style={crusherStyle[5]} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 6)}>6</div>
+                        <div id='seven' style={crusherStyle[6]} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 7)}>7</div>
+                        <div id='eight' style={crusherStyle[7]} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 8)}>8</div>
+                    </> : <>
+                        <div id='one' style={{ ...crusherStyle[0], opacity: "0" }} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 1)}>1</div>
+                        <div id='two' style={{ ...crusherStyle[1], opacity: "0" }} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 2)}>2</div>
+                        <div id='three' style={{ ...crusherStyle[2], opacity: "0" }} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 3)}>3</div>
+                        <div id='four' style={{ ...crusherStyle[3], opacity: "0" }} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 4)}>4</div>
+                        <div id='ive' style={{ ...crusherStyle[4], opacity: "0" }} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 5)}>5</div>
+                        <div id='six' style={{ ...crusherStyle[5], opacity: "0" }} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 6)}>6</div>
+                        <div id='seven' style={{ ...crusherStyle[6], opacity: "0" }} className={`select delay-select-odd ${!crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 7)}>7</div>
+                        <div id='eight' style={{ ...crusherStyle[7], opacity: "0" }} className={`select delay-select-even ${crusherChoice ? 'show-none' : ''}`} onClick={(e) => handleCrusher(e, 8)}>8</div>
+                    </>}
             </div>
 
         </div >
