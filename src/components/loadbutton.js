@@ -9,7 +9,7 @@ export default function LoadButton(props) {
                 <span className="load-sound">LOAD SOUND</span>
                 <input type="file" id="sound-file" hidden accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
             </label>
-            {mediaBlobUrl ? <a download="Sample" href={mediaBlobUrl} className="load-sound">D/L SAMPLE</a> : ""}
+            {mediaBlobUrl ? <a download="Sample" href={mediaBlobUrl} className="load-sound">D/L SAMPLE</a> : <a download="Sample" href={mediaBlobUrl} className="load-sound" style={{ pointerEvents: "none" }}>D/L SAMPLE</a>}
         </div>
     )
 }

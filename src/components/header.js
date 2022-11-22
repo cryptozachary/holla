@@ -10,6 +10,21 @@ export default function Header(props) {
     const [modalShow, setModalShow] = useState(false)
     const [modalShowTwo, setModalShowTwo] = useState(false)
 
+    //debounce effect to limit the number of re-renders on selections
+    const debounce = (func, wait) => {
+        let timeout;
+
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    };
+
     // toggles settings based on display
     const modalStyle = {
         opacity: !modalShow ? "0" : "1"
@@ -37,25 +52,32 @@ export default function Header(props) {
     //displays settings menu
     function showModal() {
 
-        setModalShowTwo(!modalShowTwo)
-        //for opacity transition effect 
-        setTimeout(() => {
+        if (modalStyleTwo.display === 'none' && modalStyle.opacity == "0") {
+            setModalShowTwo(!modalShowTwo)
+            //for opacity transition effect 
+            setTimeout(() => {
+                setModalShow(!modalShow)
+            }, 100)
+            checkModal()
+        } else if (modalStyleTwo.display === 'block' && modalStyle.opacity == "1") {
             setModalShow(!modalShow)
-        }, 100)
-
-        checkModal()
+            //for display delay effect 
+            setTimeout(() => {
+                setModalShowTwo(!modalShowTwo)
+            }, 1000)
+            checkModal()
+        }
 
     }
 
-    function aboutModal() {
-        console.log("about menu clicked")
+    function loginModal() {
+        console.log("login menu clicked")
     }
 
-    const checkModal = () => {
-
+    function checkModal() {
         if (modalStyleTwo.display === 'block') {
             setMenuShowing(!menuShowing)
-        } else {
+        } else if (modalStyleTwo.display === 'none') {
             setMenuShowing(!menuShowing)
         }
     }
@@ -68,9 +90,9 @@ export default function Header(props) {
             </div>
             <nav className="navigation-container">
                 <img className="pac-logo" src={PacLogo} alt="pac"></img>
-                <div className="home-nav nav-div" onClick={showModal}>Settings
+                <div className="home-nav nav-div" onClick={debounce(showModal, 150)}>Settings
                 </div>
-                {/* <div className="about nav-div" onClick={aboutModal}>About</div> */}
+                <div className="login nav-div" onClick={loginModal}>Log-In</div>
 
                 {/* <a href="#" className="feature-request">Feature-Request</a>
                 <a href="#" className="share">Share</a> */}
