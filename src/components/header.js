@@ -1,7 +1,10 @@
 import PacLogo from "../images/pac.png"
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import Effects from "./effects"
 import Display from "./display"
+import DashBoard from "./login/dashboard"
+import { Link, useNavigate } from "react-router-dom"
+
 
 export default function Header(props) {
 
@@ -52,14 +55,14 @@ export default function Header(props) {
     //displays settings menu
     function showModal() {
 
-        if (modalStyleTwo.display === 'none' && modalStyle.opacity == "0") {
+        if (modalStyleTwo.display === 'none' && modalStyle.opacity === "0") {
             setModalShowTwo(!modalShowTwo)
             //for opacity transition effect 
             setTimeout(() => {
                 setModalShow(!modalShow)
             }, 100)
             checkModal()
-        } else if (modalStyleTwo.display === 'block' && modalStyle.opacity == "1") {
+        } else if (modalStyleTwo.display === 'block' && modalStyle.opacity === "1") {
             setModalShow(!modalShow)
             //for display delay effect 
             setTimeout(() => {
@@ -71,7 +74,7 @@ export default function Header(props) {
     }
 
     function loginModal() {
-        console.log("login menu clicked")
+
     }
 
     function checkModal() {
@@ -86,13 +89,14 @@ export default function Header(props) {
     return (
         <div>
             <div className="header-container">
-                <h1 className="header-title">HOLLA' AT ME</h1>
+                <h1 className="header-title"><Link to='/'>HOLLA' AT ME</Link></h1>
             </div>
             <nav className="navigation-container">
                 <img className="pac-logo" src={PacLogo} alt="pac"></img>
                 <div className="home-nav nav-div" onClick={debounce(showModal, 150)}>Settings
                 </div>
-                <div className="login nav-div" onClick={loginModal}>Log-In</div>
+
+                <Link className="login nav-div" to="/login">Login</Link>
 
                 {/* <a href="#" className="feature-request">Feature-Request</a>
                 <a href="#" className="share">Share</a> */}

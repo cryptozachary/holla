@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Header from "./components/header"
 import Display from "./components/display"
-//import Buttons from "./components/buttons"
-//import Media from "./components/Media"
-//import { Effects } from "./components/Effects"
+import Preferences from './components/login/preferences'
+import DashBoard from './components/login/dashboard'
+import Login from './components/login/login'
 import EffectsData from "./components/EffectsData"
 import { FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
+import { BrowserRouter, Routes, Route, Link, Outlet, } from 'react-router-dom';
 
 
 
@@ -38,6 +39,7 @@ function App() {
     crusherBits: 1
   })
 
+  const [token, setToken] = useState();
 
   // instances of effects created
   let reverb = new Reverb(effectParams.verbDecay)
@@ -69,6 +71,8 @@ function App() {
     }
   })
 
+
+
   return (
     <div className="main-app-body">
 
@@ -82,6 +86,13 @@ function App() {
         setMenuShowing={setMenuShowing}
       />
 
+      <Routes>
+        <Route path='/login' element={<Login />}>
+          <Route path="preferences" element={<Preferences />} />
+        </Route>
+
+      </Routes>
+
       <div className="app">
         <Display
           effArr={effArr}
@@ -91,8 +102,8 @@ function App() {
           setEffectsToggle={setEffectsToggle}
           menuShowing={menuShowing}
         />
-
       </div>
+
     </div>
   )
 }
