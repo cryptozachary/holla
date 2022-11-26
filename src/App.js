@@ -71,38 +71,45 @@ function App() {
     }
   })
 
+  if (!token) {
+    return <Login setToken={setToken} />
+  }
 
 
   return (
     <div className="main-app-body">
-
-      <Header
-        effArr={effArr}
-        effectParams={effectParams}
-        setEffectParams={setEffectParams}
-        effectsToggle={effectsToggle}
-        setEffectsToggle={setEffectsToggle}
-        menuShowing={menuShowing}
-        setMenuShowing={setMenuShowing}
-      />
-
       <Routes>
+        <Route path="/" element={
+          <>
+            <Header
+              effArr={effArr}
+              effectParams={effectParams}
+              setEffectParams={setEffectParams}
+              effectsToggle={effectsToggle}
+              setEffectsToggle={setEffectsToggle}
+              menuShowing={menuShowing}
+              setMenuShowing={setMenuShowing}
+            />
+            <div className="app">
+              <Display
+                effArr={effArr}
+                effectParams={effectParams}
+                setEffectParams={setEffectParams}
+                effectsToggle={effectsToggle}
+                setEffectsToggle={setEffectsToggle}
+                menuShowing={menuShowing}
+              />
+            </div>
+          </>
+        } />
         <Route path='/login' element={<Login />}>
+          <Route path='dashboard' element={DashBoard} />
           <Route path="preferences" element={<Preferences />} />
         </Route>
 
       </Routes>
 
-      <div className="app">
-        <Display
-          effArr={effArr}
-          effectParams={effectParams}
-          setEffectParams={setEffectParams}
-          effectsToggle={effectsToggle}
-          setEffectsToggle={setEffectsToggle}
-          menuShowing={menuShowing}
-        />
-      </div>
+
 
     </div>
   )
