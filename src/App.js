@@ -7,6 +7,8 @@ import Login from './components/login/login'
 import EffectsData from "./components/EffectsData"
 import { FeedbackDelay, Reverb, StereoWidener, Distortion, BitCrusher, Phaser, Chorus } from 'tone'
 import { BrowserRouter, Routes, Route, Link, Outlet, } from 'react-router-dom';
+import useToken from './useToken'
+import SignUp from './components/login/signup'
 
 
 
@@ -22,6 +24,8 @@ function App() {
   // check if menu is showing
   const [menuShowing, setMenuShowing] = useState(false)
 
+  //check if preferneces is showing
+  const [prefShowing, setPrefShowing] = useState(false)
 
   // effect parameters
   const [effectParams, setEffectParams] = useState({
@@ -38,8 +42,6 @@ function App() {
     chorusDepth: 0.5,
     crusherBits: 1
   })
-
-  const [token, setToken] = useState();
 
   // instances of effects created
   let reverb = new Reverb(effectParams.verbDecay)
@@ -71,10 +73,11 @@ function App() {
     }
   })
 
+  const { token, setToken } = useToken()
+
   if (!token) {
     return <Login setToken={setToken} />
   }
-
 
   return (
     <div className="main-app-body">
@@ -89,7 +92,11 @@ function App() {
               setEffectsToggle={setEffectsToggle}
               menuShowing={menuShowing}
               setMenuShowing={setMenuShowing}
+              prefShowing={prefShowing}
+              setPrefShowing={setPrefShowing}
+              token={token}
             />
+
             <div className="app">
               <Display
                 effArr={effArr}
@@ -100,15 +107,13 @@ function App() {
                 menuShowing={menuShowing}
               />
             </div>
+
+
           </>
+
         } />
-        <Route path='/login' element={<Login />}>
-          <Route path='dashboard' element={DashBoard} />
-          <Route path="preferences" element={<Preferences />} />
-        </Route>
-
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
-
 
 
     </div>

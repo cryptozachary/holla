@@ -2,6 +2,9 @@
 
 export default function Preferences() {
     return (
-        <div>Preferences</div>
+        <div className="pref-container">
+            <input type="text" className="nav-div"></input>
+        </div>
+
     )
 }

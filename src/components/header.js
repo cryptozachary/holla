@@ -1,14 +1,15 @@
 import PacLogo from "../images/pac.png"
 import React, { useState } from "react"
 import Effects from "./effects"
-import Display from "./display"
+import Preferences from "./login/preferences"
 import DashBoard from "./login/dashboard"
+import LogOut from "./login/logout"
 import { Link, useNavigate } from "react-router-dom"
 
 
 export default function Header(props) {
 
-    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams, setEffArr, menuShowing, setMenuShowing } = props
+    const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectParams, setEffArr, menuShowing, setMenuShowing, setPrefShowing, prefShowing, token } = props
 
     const [modalShow, setModalShow] = useState(false)
     const [modalShowTwo, setModalShowTwo] = useState(false)
@@ -73,8 +74,10 @@ export default function Header(props) {
 
     }
 
-    function loginModal() {
-
+    function handlePref() {
+        setPrefShowing(prev => {
+            return !prev
+        })
     }
 
     function checkModal() {
@@ -93,11 +96,12 @@ export default function Header(props) {
             </div>
             <nav className="navigation-container">
                 <img className="pac-logo" src={PacLogo} alt="pac"></img>
-                <div className="home-nav nav-div" onClick={debounce(showModal, 150)}>Settings
+                <div className="home-nav nav-div" onClick={debounce(showModal, 150)}>Effect Menu
                 </div>
-
-                <Link className="login nav-div" to="/login">Login</Link>
-
+                <LogOut />
+                {token ? <DashBoard /> : null}
+                <div className="login nav-div" onClick={handlePref}>Preferences</div>
+                {prefShowing ? <Preferences /> : null}
                 {/* <a href="#" className="feature-request">Feature-Request</a>
                 <a href="#" className="share">Share</a> */}
             </nav>
