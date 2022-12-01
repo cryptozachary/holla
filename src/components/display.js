@@ -12,6 +12,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone/index.js'
 import LoadButton from './loadbutton'
 import MicButton from './micbutton'
+import { Sampler } from 'tone'
 //import { effArr } from './effects2'
 //import { effectParams } from './effects2'
 
@@ -22,6 +23,8 @@ export default function Display(props) {
     const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams, menuShowing } = props
 
     let sampler;
+    const recorder = useRef(new Tone.Recorder({ mimeType: "audio/webm" }))
+    let recording;
 
     const wavesurfer = useRef()
 
@@ -31,9 +34,13 @@ export default function Display(props) {
 
     const [micState, setMicState] = React.useState(false)
 
+    const [loopOn, setLoopOn] = React.useState(false)
+
+    const [loopPlaying, setLoopPlaying] = React.useState(false)
+
     const [defaultSound, setDefaultSound] = React.useState(Kick)
 
-
+    const [defaultBlob, setDefaultBlob] = React.useState(null)
 
     const { status,
         startRecording,
@@ -54,6 +61,7 @@ export default function Display(props) {
 
     //Renders wavesurfer and updates when defaultsound changes and/or mic turns on/off
     React.useEffect(() => {
+        let blobNull;
         // Create a wavesurfer object
         // More info about options here https://wavesurfer-js.org/docs/options.html
         wavesurfer.current = WaveSurfer.create({
@@ -92,38 +100,52 @@ export default function Display(props) {
 
         // start/stop mic recording visual
         if (micState) {
+            console.log('start mic state')
             wavesurfer.current.microphone.start()
+            blobNull = true
+        }
+
+        if (blobNull) {
+            setDefaultBlob(prev => {
+                return null
+            })
         }
 
         if (!micState) {
             wavesurfer.current.microphone.stop()
+            wavesurfer.current.microphone.stop()
+            console.log('stopped mic state')
+            console.log(defaultBlob)
         }
 
-
+        if (defaultBlob !== null) {
+            wavesurfer.current.loadBlob(defaultBlob)
+            console.log('newblob')
+        }
 
         console.log("running wavesurfer useffect")
         console.log(wavesurfer)
 
         return function () {
             wavesurfer.current.destroy()
-            //wavesurfer.current.backend.destroy()
-            // wavesurfer.current.backend = null
+            // wavesurfer.current.backend.destroy()
+            wavesurfer.current.backend = null
             console.log('Still alive surfer?', wavesurfer)
         }
 
-    }, [defaultSound, micState]);
+    }, [defaultSound, defaultBlob, micState, mediaBlobUrl]);
 
-
-    //renders tone sampler and updates when defaultsound changes or octave of sample changes
+    //renders tone sampler and updates when defaultsound changes or other changes
     React.useEffect(() => {
 
+        //trying to add new blob to samplers??
         sampler = new Tone.Sampler({
             urls: {
-                "C4": defaultSound
+                "C4": defaultSound,
             },
             release: 1,
 
-        }).toDestination();
+        }).connect(recorder.current).toDestination();
 
 
         console.log("running tone sample useffect")
@@ -132,7 +154,69 @@ export default function Display(props) {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound, effectsToggle, effectParams, menuShowing])
+    }, [octave, defaultSound, defaultBlob, effectsToggle, effectParams, menuShowing, recordLoop])
+
+    //record human playback of loop
+    async function recordLoop() {
+
+        console.log(loopOn)
+
+        if (recorder.current.state === "started") return console.log('already started')
+
+        recorder.current.start().then(() => {
+            console.log('currently playing')
+        })
+
+        setLoopOn(is => {
+            return true
+        })
+
+        console.log(loopOn)
+    }
+
+    //stop human playback of loop
+    async function stopLoopRecording() {
+
+        console.log(recorder)
+
+
+        recorder.current.stop().then((recording) => {
+            setDefaultBlob(prev => {
+                console.log(recording)
+                return recording
+            })
+            // console.log(recording)
+            // new Response(recording).arrayBuffer().then((data) => {
+            //     setDefaultBlob(prev => {
+            //         return data
+            //     })
+            //     console.log(data)
+            // })
+
+        }).catch(err => {
+            console.log(err, 'ERROR')
+        })
+        setLoopOn(is => {
+            return false
+        })
+    }
+
+    // play human loop back
+    async function playLoop() {
+
+        setLoopPlaying(prev => {
+            return true
+        })
+        wavesurfer.current.play()
+    }
+
+    async function stopLoop() {
+
+        setLoopPlaying(prev => {
+            return false
+        })
+        wavesurfer.current.stop()
+    }
 
 
 
@@ -357,7 +441,6 @@ export default function Display(props) {
     }
 
     //preview pad on settings menu
-
     function previewPad() {
         Tone.loaded().then(() => {
             sampler.releaseAll(Tone.context.currentTime);
@@ -388,9 +471,29 @@ export default function Display(props) {
     return (
         <div className="ui-container">
             <div id="waveform" className="wave-display"></div>
-            <LoadButton mediaBlobUrl={mediaBlobUrl} loadSound={loadSound} />
-            <MicButton micState={micState} toggleMic={toggleMic} MicLogo={MicLogo} StopLogo={StopLogo} />
-            <Octaves left={toggleLeft} right={toggleRight} octaveLevel={octave} />
+
+            <LoadButton
+                mediaBlobUrl={mediaBlobUrl} loadSound={loadSound}
+            />
+
+            <MicButton
+                loopOn={loopOn}
+                loopPlaying={loopPlaying}
+                playLoop={playLoop}
+                stopLoop={stopLoop}
+                recordLoop={recordLoop}
+                stopLoopRecording={stopLoopRecording}
+                micState={micState}
+                toggleMic={toggleMic}
+                MicLogo={MicLogo}
+                StopLogo={StopLogo}
+
+            />
+
+            <Octaves left={toggleLeft}
+                right={toggleRight}
+                octaveLevel={octave} />
+
             <div className="transport">
                 {samples}
             </div>
