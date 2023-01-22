@@ -100,7 +100,7 @@ export default function Header(props) {
                 <div className="home-nav nav-div" onClick={debounce(showModal, 150)}>Effect Menu
                 </div>
                 {/* {token ? <DashBoard /> : null} */}
-                <div className="login nav-div" onClick={handlePref}>Preferences</div>
+                {/* <div className="login nav-div" onClick={handlePref}>Preferences</div>*/}
             </nav>
             <div className="modal-container">
                 {prefShowing ? <Preferences /> : null}
