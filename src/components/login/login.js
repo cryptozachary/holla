@@ -126,19 +126,19 @@ export default function Login(props) {
 
             {showSignUp ?
                 <div className="the-wrapper">
-                    <h1>Please Log In</h1>
+                    <h1 className="form-init">Please Log In</h1>
                     <form>
                         <label>
-                            <p>Username</p>
+                            <p className="form-init">Username</p>
                             <input type="text" ref={username} onChange={(e) => setTheUsername(e.target.value)} name="username" id="username" className="login-input" />
                         </label>
                         <label>
-                            <p>Password</p>
+                            <p className="form-init">Password</p>
                             <input type="password" ref={password} onChange={(e) => setThePassword(e.target.value)} name="password" id="password" className="login-input" />
                         </label>
-                        <div>
-                            <button type="submit" onClick={(e) => handleSubmit(e)} >Submit</button>
-                            <button type="button" onClick={handleSignUp} >Sign-Up</button>
+                        <div className="form-init">
+                            <button className="form-init-button" type="submit" onClick={(e) => handleSubmit(e)} >Submit</button>
+                            <button className="form-init-button" type="button" onClick={handleSignUp} >Sign-Up</button>
                         </div>
                     </form>
                     <div id='enter-info'>{enterInfo}</div>

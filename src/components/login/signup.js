@@ -22,7 +22,7 @@ function SignUp(props) {
             return setEnterInfo("Please enter username and password")
         }
 
-        if (localStorage.getItem(JSON.stringify(username.current.value))) { return setEnterInfo(" Username already exist") }
+        if (localStorage.getItem(username.current.value)) { return setEnterInfo(" Username already exist") }
 
         if (!password.current.value) {
             return setEnterInfo("Please enter password")
@@ -39,24 +39,24 @@ function SignUp(props) {
 
         setEnterInfo("Thank you for signing up!")
         setTimeout(() => {
-            setShowSignUp(true)
+            window.location.reload()
         }, 3000)
     }
     return (
         <>
             <div className="the-wrapper">
-                <h1>Please Sign Up</h1>
+                <h1 className="form-init">Please Sign Up</h1>
                 <form>
                     <label>
-                        <p> Choose Username</p>
+                        <p className="form-init"> Choose Username</p>
                         <input type="text" ref={username} onChange={(e) => setTheUsername(e.target.value)} name="username" id="username" className="login-input" />
                     </label>
                     <label>
-                        <p>Choose Password</p>
+                        <p className="form-init">Choose Password</p>
                         <input type="password" ref={password} onChange={(e) => setThePassword(e.target.value)} name="password" id="password" className="login-input" />
                     </label>
-                    <div>
-                        <button type="submit" onClick={(e) => handleSubmit(e)} >Submit</button>
+                    <div className="form-init">
+                        <button className="form-init-button" type="submit" onClick={(e) => handleSubmit(e)} >Submit</button>
                     </div>
                 </form>
                 <div id='enter-info'>{enterInfo}</div>
