@@ -22,9 +22,9 @@ export default function Display(props) {
 
     const { effectsToggle, setEffectsToggle, effArr, effectParams, setEffectsParams, menuShowing } = props
 
-    let sampler;
+    let sampler
+
     const recorder = useRef(new Tone.Recorder({ mimeType: "audio/webm" }))
-    let recording;
 
     const wavesurfer = useRef()
 
@@ -95,41 +95,43 @@ export default function Display(props) {
             ]
         });
 
-        //load sound
-        wavesurfer.current.load(defaultSound)
-
         // start/stop mic recording visual
         if (micState) {
             console.log('start mic state')
             wavesurfer.current.microphone.start()
             blobNull = true
         }
-
+        // if mic is recording set the previous blob to nothing
         if (blobNull) {
             setDefaultBlob(prev => {
                 return null
             })
         }
-
+        // if micstate is true deactivate the microphone
         if (!micState) {
-            wavesurfer.current.microphone.stop()
             wavesurfer.current.microphone.stop()
             console.log('stopped mic state')
             console.log(defaultBlob)
         }
 
+        //if blob exist load blob instead of default sounds
         if (defaultBlob !== null) {
             wavesurfer.current.loadBlob(defaultBlob)
             console.log('newblob')
+        } else {
+            //load sound if blolb doesnt exists
+            wavesurfer.current.load(defaultSound)
         }
 
         console.log("running wavesurfer useffect")
         console.log(wavesurfer)
 
+        //cleanup wavesurfer
         return function () {
+
             wavesurfer.current.destroy()
             // wavesurfer.current.backend.destroy()
-            wavesurfer.current.backend = null
+            //wavesurfer.current.backend = null
             console.log('Still alive surfer?', wavesurfer)
         }
 
@@ -138,10 +140,12 @@ export default function Display(props) {
     //renders tone sampler and updates when defaultsound changes or other changes
     React.useEffect(() => {
 
-        //trying to add new blob to samplers??
+        let loadedSound = defaultBlob ?? defaultSound
+        //create instance of sampler and connect to media recorder and main output
+
         sampler = new Tone.Sampler({
             urls: {
-                "C4": defaultSound,
+                "C4": defaultSound
             },
             release: 1,
 
@@ -150,41 +154,44 @@ export default function Display(props) {
 
         console.log("running tone sample useffect")
 
+        //cleanup instance of sampler
         return function () {
             sampler.dispose('sampler')
         }
 
-    }, [octave, defaultSound, defaultBlob, effectsToggle, effectParams, menuShowing, recordLoop])
+    }, [octave, defaultSound, effectsToggle, effectParams, menuShowing, recordLoop])
 
-    //record human playback of loop
+    //record human recording of loop
     async function recordLoop() {
 
         console.log(loopOn)
-
+        //stop if recorder is already running
         if (recorder.current.state === "started") return console.log('already started')
-
+        // start recorder
         recorder.current.start().then(() => {
+
             console.log('currently playing')
         })
-
+        //if recorder is recording set to true
         setLoopOn(is => {
             return true
         })
-
         console.log(loopOn)
     }
 
-    //stop human playback of loop
+    //stop human recording of loop
     async function stopLoopRecording() {
 
         console.log(recorder)
 
-
+        // stop recording and set the default blob if greater than 0 kb in size
         recorder.current.stop().then((recording) => {
             setDefaultBlob(prev => {
-                console.log(recording)
+                if (recording.size === 0) return null
                 return recording
             })
+
+
             // console.log(recording)
             // new Response(recording).arrayBuffer().then((data) => {
             //     setDefaultBlob(prev => {
@@ -196,29 +203,33 @@ export default function Display(props) {
         }).catch(err => {
             console.log(err, 'ERROR')
         })
+        //if recorder is not running set to false
         setLoopOn(is => {
             return false
         })
+
     }
 
-    // play human loop back
-    async function playLoop() {
+    // start loop playback
+    function playLoop() {
+
+        wavesurfer.current.play()
 
         setLoopPlaying(prev => {
             return true
         })
-        wavesurfer.current.play()
     }
 
-    async function stopLoop() {
+    //stop loop playback
+    function stopLoop() {
+
+        wavesurfer.current.stop()
 
         setLoopPlaying(prev => {
             return false
         })
-        wavesurfer.current.stop()
+
     }
-
-
 
     //connect and disconnect effect when effect turned on/off
     function connectEffect() {
@@ -247,7 +258,6 @@ export default function Display(props) {
         }
 
     }
-
 
     //calls function to turn on/off effects
     React.useEffect(() => {
@@ -464,7 +474,14 @@ export default function Display(props) {
 
     //map buttons to UI
     let samples = buttonState.map((item, index) => {
-        return <Buttons handleClick={() => padClick(item.name)} key={index} padName={item.name} padNote={item.note}></Buttons>
+        return (
+            <Buttons
+                handleClick={() => padClick(item.name)}
+                key={index}
+                padName={item.name}
+                padNote={item.note}>
+            </Buttons>
+        )
     })
 
 
@@ -473,7 +490,9 @@ export default function Display(props) {
             <div id="waveform" className="wave-display"></div>
 
             <LoadButton
-                mediaBlobUrl={mediaBlobUrl} loadSound={loadSound}
+                mediaBlobUrl={mediaBlobUrl}
+                loadSound={loadSound}
+                defaultBlob={defaultBlob}
             />
 
             <MicButton
@@ -487,10 +506,11 @@ export default function Display(props) {
                 toggleMic={toggleMic}
                 MicLogo={MicLogo}
                 StopLogo={StopLogo}
-
+                wavesurfer={wavesurfer.current}
             />
 
-            <Octaves left={toggleLeft}
+            <Octaves
+                left={toggleLeft}
                 right={toggleRight}
                 octaveLevel={octave} />
 

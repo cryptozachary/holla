@@ -1,12 +1,13 @@
 import Header from "../header";
 import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PropTypes } from 'prop-types';
 import SignUp from "./signup";
+import { getNextKeyDef } from "@testing-library/user-event/dist/keyboard/getNextKeyDef";
 
 
 async function loginUser(credentials) {
-    return fetch('http://localhost:8080/login', {
+    return fetch('http://localhost:8080', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -17,6 +18,7 @@ async function loginUser(credentials) {
 }
 
 export default function Login(props) {
+
     const { setToken } = props
 
     const password = useRef(null)
@@ -29,7 +31,28 @@ export default function Login(props) {
 
     const [enterInfo, setEnterInfo] = useState("")
 
-    const [loadedUsernames, setLoadedUsernames] = useState([])
+    const [loadedUsernames, setLoadedUsernames] = useState(getKeys())
+
+
+    function getKeys() {
+
+        let keyArray = []
+
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i)
+            keyArray.push(key)
+            console.log(key)
+        }
+        console.log('running getKeys')
+        console.log(keyArray)
+
+        return keyArray
+    }
+
+    useEffect(() => {
+        getKeys()
+        console.log(loadedUsernames)
+    }, [])
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -46,28 +69,29 @@ export default function Login(props) {
             return setEnterInfo("Please enter username")
         }
 
-        let storedUserPassword = localStorage.getItem(JSON.stringify(theUsername))
-
-        console.log(storedUserPassword)
-        let keyArray = []
+        let usernameFound = false;
         let match = true
 
-        for (let i = 0; i < localStorage.length; i++) {
-            let key = localStorage.key(i)
-            keyArray.push(key)
-            setLoadedUsernames(prev => {
-                return [...keyArray]
-            })
-            console.log(loadedUsernames)
-        }
-
-        keyArray.some(key => {
-            if (key !== JSON.stringify(theUsername) && JSON.stringify(thePassword) !== storedUserPassword) {
-                setEnterInfo("Please enter correct username and/or password")
-                console.log('no match')
-                match = false
+        loadedUsernames.some(username => {
+            if (username == theUsername) {
+                usernameFound = true;
             }
-        })
+        });
+
+        if (!usernameFound) {
+            setEnterInfo("Please enter correct username");
+            match = false;
+        }
+        console.log(`match: ${match}`, `usernamefound ${usernameFound}`)
+
+        if (usernameFound) {
+            let storedUserPassword = localStorage.getItem(theUsername);
+            console.log(storedUserPassword)
+            if (storedUserPassword !== thePassword) {
+                setEnterInfo("Please enter correct username and/or password");
+                match = false;
+            }
+        }
 
         if (!match) return
 
@@ -96,7 +120,6 @@ export default function Login(props) {
     }
     return (
         <>
-
             <div className="header-container">
                 <h1 className="header-title" onClick={() => setShowSignUp(true)}><Link to='/'>HOLLA' AT ME</Link></h1>
             </div>

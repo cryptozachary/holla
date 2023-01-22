@@ -1,6 +1,11 @@
 export default function LoadButton(props) {
 
-    const { loadSound, mediaBlobUrl } = props
+    const { loadSound, mediaBlobUrl, defaultBlob } = props
+
+    let createURL = () => {
+        let url = URL.createObjectURL(defaultBlob)
+        return url
+    }
 
     return (
         <div className="load-container">
@@ -9,7 +14,7 @@ export default function LoadButton(props) {
                 <span className="load-sound">LOAD SOUND</span>
                 <input type="file" id="sound-file" hidden accept="audio/mp3" onChange={(e) => loadSound(e)}></input>
             </label>
-            {mediaBlobUrl ? <a download="Sample" href={mediaBlobUrl} className="load-sound">D/L SAMPLE</a> : <a download="Sample" href={mediaBlobUrl} className="load-sound" style={{ pointerEvents: "none" }}>D/L SAMPLE</a>}
+            {mediaBlobUrl || defaultBlob ? <a download="Sample" href={mediaBlobUrl || createURL()} className="load-sound">D/L SAMPLE</a> : <a download="Sample" href={mediaBlobUrl} className="load-sound" style={{ pointerEvents: "none" }}>D/L SAMPLE</a>}
         </div>
     )
 }

@@ -96,16 +96,14 @@ export default function Header(props) {
             </div>
             <nav className="navigation-container">
                 <img className="pac-logo" src={PacLogo} alt="pac"></img>
+                <LogOut />
                 <div className="home-nav nav-div" onClick={debounce(showModal, 150)}>Effect Menu
                 </div>
-                <LogOut />
-                {token ? <DashBoard /> : null}
+                {/* {token ? <DashBoard /> : null} */}
                 <div className="login nav-div" onClick={handlePref}>Preferences</div>
-                {prefShowing ? <Preferences /> : null}
-                {/* <a href="#" className="feature-request">Feature-Request</a>
-                <a href="#" className="share">Share</a> */}
             </nav>
             <div className="modal-container">
+                {prefShowing ? <Preferences /> : null}
                 <div style={{ ...modalStyle, ...modalStyleTwo }} className="settings-container">
                     <div className="settings-modal">
                         <Effects

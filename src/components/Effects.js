@@ -103,20 +103,7 @@ function Effects(props) {
 
     };
 
-    //debounce effect to limit the number of re-renders on selections
-    const debounce = (func, wait) => {
-        let timeout;
 
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    };
 
     //function to toggle delay even or odd delay visual
     function handleDelayChoice() {

@@ -22,6 +22,8 @@ function SignUp(props) {
             return setEnterInfo("Please enter username and password")
         }
 
+        if (localStorage.getItem(JSON.stringify(username.current.value))) { return setEnterInfo(" Username already exist") }
+
         if (!password.current.value) {
             return setEnterInfo("Please enter password")
         }
@@ -30,7 +32,8 @@ function SignUp(props) {
             return setEnterInfo("Please enter username")
         }
 
-        localStorage.setItem(JSON.stringify(theUsername), JSON.stringify(thePassword))
+        let storedUserPassword = localStorage.getItem(JSON.stringify(theUsername))
+        localStorage.setItem(theUsername, thePassword)
 
         console.log(theUsername, thePassword)
 
@@ -41,10 +44,6 @@ function SignUp(props) {
     }
     return (
         <>
-            <div className="header-container">
-                <h1 className="header-title" onClick={() => setShowSignUp(true)}><Link to='/'>HOLLA' AT ME</Link></h1>
-            </div>
-
             <div className="the-wrapper">
                 <h1>Please Sign Up</h1>
                 <form>
