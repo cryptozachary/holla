@@ -45,17 +45,17 @@ function SignUp(props) {
     return (
         <>
             <div className="the-wrapper">
-                <h1 className="form-init">Please Sign Up</h1>
-                <form>
+                <h1 className='form-header'>Sign Up to log in</h1>
+                <form className='form'>
                     <label>
-                        <p className="form-init"> Choose Username</p>
+                        <p> Choose Username</p>
                         <input type="text" ref={username} onChange={(e) => setTheUsername(e.target.value)} name="username" id="username" className="login-input" />
                     </label>
                     <label>
-                        <p className="form-init">Choose Password</p>
+                        <p>Choose Password</p>
                         <input type="password" ref={password} onChange={(e) => setThePassword(e.target.value)} name="password" id="password" className="login-input" />
                     </label>
-                    <div className="form-init">
+                    <div>
                         <button className="form-init-button" type="submit" onClick={(e) => handleSubmit(e)} >Submit</button>
                     </div>
                 </form>

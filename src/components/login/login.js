@@ -7,7 +7,7 @@ import { getNextKeyDef } from "@testing-library/user-event/dist/keyboard/getNext
 
 
 async function loginUser(credentials) {
-    return fetch('http://localhost:8080', {
+    return fetch('http://localhost:8080/token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -18,6 +18,7 @@ async function loginUser(credentials) {
 }
 
 export default function Login(props) {
+    console.log(props)
 
     const { setToken } = props
 
@@ -126,17 +127,17 @@ export default function Login(props) {
 
             {showSignUp ?
                 <div className="the-wrapper">
-                    <h1 className="form-init">Please Log In</h1>
-                    <form>
+                    <h1 className="form-header">Log In</h1>
+                    <form className="form">
                         <label>
-                            <p className="form-init">Username</p>
+                            <p>Username</p>
                             <input type="text" ref={username} onChange={(e) => setTheUsername(e.target.value)} name="username" id="username" className="login-input" />
                         </label>
                         <label>
-                            <p className="form-init">Password</p>
+                            <p>Password</p>
                             <input type="password" ref={password} onChange={(e) => setThePassword(e.target.value)} name="password" id="password" className="login-input" />
                         </label>
-                        <div className="form-init">
+                        <div>
                             <button className="form-init-button" type="submit" onClick={(e) => handleSubmit(e)} >Submit</button>
                             <button className="form-init-button" type="button" onClick={handleSignUp} >Sign-Up</button>
                         </div>

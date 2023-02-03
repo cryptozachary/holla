@@ -446,6 +446,33 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   transition-timing-function: ease;
 }
 
+
+
+.form-init-button {
+  margin-top: 15px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  background-color: #c1c1c1;
+  align-items: center;
+  min-width: 200px;
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+
+}
+
+.login-input {
+  border-style: none;
+}
+
+.form-header {
+  margin: 5px 5px
+}
+
 /* Responsive  */
 
 @media (max-width: 280px) {
@@ -459,12 +486,4 @@ input[type=range]:focus::-webkit-slider-runnable-track {
     justify-content: center;
 
   }
-}
-
-.form-init {
-  text-align: center;
-}
-
-.form-init-button {
-  margin-top: 15px;
 }
