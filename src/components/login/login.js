@@ -7,7 +7,7 @@ import { getNextKeyDef } from "@testing-library/user-event/dist/keyboard/getNext
 
 
 async function loginUser(credentials) {
-    return fetch('http://localhost:8080/token', {
+    return fetch('/token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

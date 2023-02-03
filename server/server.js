@@ -23,4 +23,5 @@ app.use('/token', (req, res, next) => {
 app.get('/', (req, res) => {
     res.sendFile('index.html', { root: filepath })
 })
+
 app.listen(port, () => console.log('API is running on http://localhost:8080'));
